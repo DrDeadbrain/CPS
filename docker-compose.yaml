@@ -8,10 +8,6 @@ services:
   
   mqttbroker:
     image: eclipse-mosquitto
-    hostname: mqttbroker
-    container_name: mqttbroker
-    ports:
-      - "1883:1883"
     volumes:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
     networks:
@@ -19,10 +15,26 @@ services:
         aliases:
           - mqttbroker
 
-  sensor:
+  tickgen:
+    build: "./tickgen"
+    environment:
+      - MQTT_ADDR=mqttbroker
+    networks:
+      - cps
+
+  sensor1:
     build: "./chaos_sensor"
     environment:
       - MQTT_ADDR=mqttbroker
+      - Sensor_ID=s1
+    networks:
+      - cps
+
+  sensor2:
+    build: "./chaos_sensor"
+    environment:
+      - MQTT_ADDR=mqttbroker
+      - Sensor_ID=s2
     networks:
       - cps
   
@@ -32,3 +44,5 @@ services:
       - MQTT_ADDR=mqttbroker
     ports:
       - "1880:1880"
+    networks:
+      - cps

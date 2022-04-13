@@ -1,1 +1,544 @@
-[{"id":"2860ad446d60019d","type":"tab","label":"Flow 2","disabled":false,"info":""},{"id":"713d0f0c05c07366","type":"debug","z":"2860ad446d60019d","name":"","active":false,"tosidebar":true,"console":false,"tostatus":false,"complete":"true","targetType":"full","statusVal":"","statusType":"auto","x":490,"y":480,"wires":[]},{"id":"48b466ee65b6b51a","type":"mqtt in","z":"2860ad446d60019d","name":"sensor/1/data","topic":"sensor/1/data","qos":"2","datatype":"auto","broker":"3861079235b4c808","x":370,"y":340,"wires":[["713d0f0c05c07366","5f714de5018a9a8a"]]},{"id":"5f714de5018a9a8a","type":"json","z":"2860ad446d60019d","name":"","property":"payload","action":"","pretty":false,"x":610,"y":340,"wires":[["fc871a97da29a412","f7563c4f82c6eaa9","488bef3166ebd69e"]]},{"id":"fc871a97da29a412","type":"ui_chart","z":"2860ad446d60019d","name":"SingleAvg","group":"3d89a586961cbace","order":0,"width":0,"height":0,"label":"single chart","chartType":"line","legend":"false","xformat":"HH:mm:ss","interpolate":"linear","nodata":"","dot":false,"ymin":"","ymax":"","removeOlder":1,"removeOlderPoints":"","removeOlderUnit":"3600","cutout":0,"useOneColor":false,"useUTC":false,"colors":["#1f77b4","#aec7e8","#ff7f0e","#2ca02c","#98df8a","#d62728","#ff9896","#9467bd","#c5b0d5"],"outputs":1,"useDifferentColor":false,"x":1040,"y":280,"wires":[[]]},{"id":"f7563c4f82c6eaa9","type":"function","z":"2860ad446d60019d","name":"","func":"let sum = flow.get('sum') || 0;\nsum +=  parseInt(msg.payload);\nmsg.payload = sum;\nflow.set('sum', sum)\nreturn msg;","outputs":1,"noerr":0,"initialize":"","finalize":"","x":840,"y":380,"wires":[["eb3585105ea2dfbf","7792c4892637eb60"]]},{"id":"488bef3166ebd69e","type":"debug","z":"2860ad446d60019d","name":"","active":false,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":710,"y":480,"wires":[]},{"id":"7792c4892637eb60","type":"ui_chart","z":"2860ad446d60019d","name":"SumAvg","group":"3d89a586961cbace","order":1,"width":0,"height":0,"label":"sum chart","chartType":"line","legend":"false","xformat":"HH:mm:ss","interpolate":"linear","nodata":"","dot":false,"ymin":"","ymax":"","removeOlder":1,"removeOlderPoints":"","removeOlderUnit":"3600","cutout":0,"useOneColor":false,"useUTC":false,"colors":["#1f77b4","#aec7e8","#ff7f0e","#2ca02c","#98df8a","#d62728","#ff9896","#9467bd","#c5b0d5"],"outputs":1,"useDifferentColor":false,"x":1040,"y":380,"wires":[[]]},{"id":"eb3585105ea2dfbf","type":"debug","z":"2860ad446d60019d","name":"","active":false,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":950,"y":480,"wires":[]},{"id":"3861079235b4c808","type":"mqtt-broker","name":"","broker":"mqttbroker","port":"1883","clientid":"","usetls":false,"compatmode":false,"keepalive":"60","cleansession":true,"birthTopic":"sensor/1/data","birthQos":"1","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""},{"id":"3d89a586961cbace","type":"ui_group","name":"Chart-1","tab":"ffb068fa7641e543","order":1,"disp":true,"width":"6","collapse":false},{"id":"ffb068fa7641e543","type":"ui_tab","name":"Home","icon":"dashboard","disabled":false,"hidden":false}]
+[
+    {
+        "id": "2860ad446d60019d",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "713d0f0c05c07366",
+        "type": "debug",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "48b466ee65b6b51a",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "sensor/1/data",
+        "topic": "sensor/s1/data",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 370,
+        "y": 340,
+        "wires": [
+            [
+                "713d0f0c05c07366",
+                "5f714de5018a9a8a"
+            ]
+        ]
+    },
+    {
+        "id": "5f714de5018a9a8a",
+        "type": "json",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": true,
+        "x": 610,
+        "y": 340,
+        "wires": [
+            [
+                "488bef3166ebd69e",
+                "2c8c45ba.95339a"
+            ]
+        ]
+    },
+    {
+        "id": "fc871a97da29a412",
+        "type": "ui_chart",
+        "z": "2860ad446d60019d",
+        "name": "SingleAvg",
+        "group": "3d89a586961cbace",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "single chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "x": 1040,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f7563c4f82c6eaa9",
+        "type": "function",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "func": "let sum = flow.get('sum') || 0;\nsum +=  parseInt(msg.payload);\nmsg.payload = sum;\nflow.set('sum', sum)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 840,
+        "y": 380,
+        "wires": [
+            [
+                "eb3585105ea2dfbf",
+                "7792c4892637eb60"
+            ]
+        ]
+    },
+    {
+        "id": "488bef3166ebd69e",
+        "type": "debug",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 710,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "7792c4892637eb60",
+        "type": "ui_chart",
+        "z": "2860ad446d60019d",
+        "name": "SumAvg",
+        "group": "3d89a586961cbace",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "sum chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "x": 1040,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "eb3585105ea2dfbf",
+        "type": "debug",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "1be721e.9f5ca5e",
+        "type": "inject",
+        "z": "2860ad446d60019d",
+        "name": "tickgen/tick:0",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "tickgen/tick",
+        "payload": "0",
+        "payloadType": "num",
+        "x": 390,
+        "y": 40,
+        "wires": [
+            [
+                "151b6c4c.7f7ea4"
+            ]
+        ]
+    },
+    {
+        "id": "a0bfdc2a.478be8",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "tickgen/tick",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 380,
+        "y": 100,
+        "wires": [
+            [
+                "151b6c4c.7f7ea4"
+            ]
+        ]
+    },
+    {
+        "id": "151b6c4c.7f7ea4",
+        "type": "ui_text",
+        "z": "2860ad446d60019d",
+        "group": "54f04762.cf06f",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Simulationszeit",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 800,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "35dcedf9.b67dea",
+        "type": "ui_text",
+        "z": "2860ad446d60019d",
+        "group": "54f04762.cf06f",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Simulationsgeschwindigkeit",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 760,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "7d0eb526.24f5bc",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "tickgen/speed_factor",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 410,
+        "y": 160,
+        "wires": [
+            [
+                "35dcedf9.b67dea"
+            ]
+        ]
+    },
+    {
+        "id": "a3b0cfdc.e8a2c",
+        "type": "inject",
+        "z": "2860ad446d60019d",
+        "name": "Speed_Factor:10",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "10",
+        "payloadType": "num",
+        "x": 390,
+        "y": 220,
+        "wires": [
+            [
+                "e3371d61.46b3b8"
+            ]
+        ]
+    },
+    {
+        "id": "e3371d61.46b3b8",
+        "type": "ui_slider",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "label": "Simulationsgeschwindigkeit",
+        "tooltip": "",
+        "group": "54f04762.cf06f",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "x": 690,
+        "y": 220,
+        "wires": [
+            [
+                "36c10c04.a003f4"
+            ]
+        ]
+    },
+    {
+        "id": "36c10c04.a003f4",
+        "type": "mqtt out",
+        "z": "2860ad446d60019d",
+        "name": "tickgen/speed_factor",
+        "topic": "tickgen/speed_factor",
+        "qos": "",
+        "retain": "",
+        "broker": "3861079235b4c808",
+        "x": 1000,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "fbe03f24.5310a",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "sensor/2/data",
+        "topic": "sensor/s2/data",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 370,
+        "y": 560,
+        "wires": [
+            [
+                "454226b1.d56818"
+            ]
+        ]
+    },
+    {
+        "id": "454226b1.d56818",
+        "type": "json",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": true,
+        "x": 610,
+        "y": 560,
+        "wires": [
+            [
+                "3497ca64.6f8ace"
+            ]
+        ]
+    },
+    {
+        "id": "bf699861.2feaa8",
+        "type": "ui_chart",
+        "z": "2860ad446d60019d",
+        "name": "SingleAvg",
+        "group": "3d89a586961cbace",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "single chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "x": 1040,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2c8c45ba.95339a",
+        "type": "change",
+        "z": "2860ad446d60019d",
+        "name": "change to number",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 770,
+        "y": 320,
+        "wires": [
+            [
+                "fc871a97da29a412",
+                "f7563c4f82c6eaa9"
+            ]
+        ]
+    },
+    {
+        "id": "3497ca64.6f8ace",
+        "type": "change",
+        "z": "2860ad446d60019d",
+        "name": "change to number",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 770,
+        "y": 560,
+        "wires": [
+            [
+                "bf699861.2feaa8",
+                "7792c4892637eb60"
+            ]
+        ]
+    },
+    {
+        "id": "3861079235b4c808",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "mqttbroker",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "sensor/1/data",
+        "birthQos": "1",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "3d89a586961cbace",
+        "type": "ui_group",
+        "name": "Chart-1",
+        "tab": "ffb068fa7641e543",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "54f04762.cf06f",
+        "type": "ui_group",
+        "name": "Configuration",
+        "tab": "ffb068fa7641e543",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "ffb068fa7641e543",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
