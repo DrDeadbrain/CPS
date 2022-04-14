@@ -2,6 +2,8 @@ import os
 import json
 import random
 import time
+import calendar
+from datetime import datetime
 import paho.mqtt.client as mqtt
 
 speed_factor = 10
@@ -16,7 +18,13 @@ def on_connect(client, userdata, flags, rc):
         print("Tickgen connection failed")
 
 def on_message(client, userdata, message):
-    speed_factor = message.payload
+    global speed_factor
+    #speed_factor = int.from_bytes(message.payload, big, False)
+    print("Message received-> " + str(message.payload))
+    converted = message.payload.decode("utf-8")
+    print("Message received-> ", converted)
+    speed_factor = int(converted)
+    print("ON_MESSAGE: ", speed_factor)
 
 Connected = False
 
@@ -38,11 +46,20 @@ while Connected != True:
 time.sleep(20)
 client.publish(f"tickgen/tick", 1)
 client.publish(f"tickgen/speed_factor", speed_factor)
+print("PUBLISH: ", speed_factor)
+
 
 client.subscribe("tickgen/speed_factor", 1)
 
 while True:
-    print(time.localtime())
-    client.publish(f"tickgen/tick", 1)
+    currentGMT = time.gmtime()
+    ts = calendar.timegm(currentGMT)
+    dt = datetime.fromtimestamp(ts)
+    print(dt)
+
+
+    client.publish(f"tickgen/tick", json.dumps({"timestamp": dt}, indent=4, sort_keys=True, default=str))
+
+    print("PUBLISH: ", speed_factor)
     client.publish(f"tickgen/speed_factor", speed_factor)
     time.sleep(speed_factor)
