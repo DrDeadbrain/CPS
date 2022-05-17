@@ -10,11 +10,11 @@ white = [255, 255, 255]
 red = [255, 0, 0]
 blue = [0, 0, 255]
 yellow = [255, 255, 0]
-dark_grey = [86, 86, 86]
+dark_grey = [150, 150, 150]
 black = [0, 0, 0]
 green = [0, 255, 0]
 pink = [255, 192, 203]
-
+forest_green = [34, 139, 34]
 
 def create_intersection_crosses(row: int, column: int, cr_width: int, cr_height: int,
                                 street_width_x: int, street_width_y: int) -> List[pygame.Rect]:
@@ -145,7 +145,7 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         event = pygame.event.poll()
         if event.type == pygame.QUIT:
             exit()
-        screen.fill(black)  # background
+        screen.fill(forest_green)  # background
         for street in streets:
             screen.fill(dark_grey, street)  # streets
         for i, light_cross in enumerate(light_crosses):
