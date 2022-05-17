@@ -1,0 +1,24 @@
+TODO:
+
+Einsatzfahrzeuge ergänzen
+    -beim generieren der Fahrzeuge mit bestimmter Wahrscheinlichkeit, sttt normalen Auto
+    -extra Klasse ?
+    -Kreuzung muss diese erkennen
+
+Ampelphasen anpassen:
+    -über policy ?
+    -immer ganze Lane?
+    - sonst Ampeln in Gruppen zusammenfassen mit eigenen MQTT Kanälen -> erste Ampel der Gruppe kommuniziert Änderung
+      Phasendauer -> anderen passen an
+      ->entsprechende MQTT Kanäle einrichten
+
+
+TODO: WICHTIGSTER Punkt!
+Kommunikation mit Dashboard:
+    - stats müssen auch Anzahl der Autos an Kreuzungen tracken
+    - stats mit mqtt implementieren und Daten über Kanal publishen
+
+Visualisierung anpassen:
+    - anderes Design für die Ampeln
+    - Farben anpassen für schöneres Gesamtbild der Simulation
+    
