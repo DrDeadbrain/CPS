@@ -2,7 +2,7 @@ version: "3.3"
 
 networks:
   cps:
-    external: false
+    external: true
 
 services:
   
@@ -44,5 +44,14 @@ services:
       - MQTT_ADDR=mqttbroker
     ports:
       - "1880:1880"
+#      - "1884:1884"
     networks:
       - cps
+
+  simulation:
+    build: "./simulation"
+    environment:
+      - MQTT_ADDR=mqttbroker
+    networks:
+      - cps
+

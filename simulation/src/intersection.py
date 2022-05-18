@@ -216,6 +216,17 @@ class World:
             max_wait_time, std_wait_time)
         print(stat_str)
 
+    def get_avg_waiting_time(self):
+        wait_times = [car.waiting_time for car in self.__all_cars__]
+        total_wait_time = sum(wait_times)
+        avg_wait_time = total_wait_time / len(self.__all_cars__)
+        return avg_wait_time
+
+    def get_max_waiting_time(self):
+        wait_times = [car.waiting_time for car in self.__all_cars__]
+        max_wait_time = max(wait_times)
+        return max_wait_time
+
         # TODO: send values via MQTT to dashboard + add max cars per crossing
 
 

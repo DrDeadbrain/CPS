@@ -1,7 +1,7 @@
 FROM python:3.10.2
 
 #setup workdir
-RUN mkdir /src#
+RUN mkdir /src
 WORKDIR /src
 
 #install pip deps

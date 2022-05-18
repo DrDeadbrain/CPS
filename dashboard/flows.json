@@ -7,6 +7,160 @@
         "info": ""
     },
     {
+        "id": "3861079235b4c808",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "mqttbroker",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "sensor/1/data",
+        "birthQos": "1",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "3d89a586961cbace",
+        "type": "ui_group",
+        "name": "Chart-1",
+        "tab": "ffb068fa7641e543",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "54f04762.cf06f",
+        "type": "ui_group",
+        "name": "Configuration",
+        "tab": "ffb068fa7641e543",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "ffb068fa7641e543",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "4e5f636e.5a6654",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#1bbfff",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#0094ce",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD.MM.YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "13758b1e.e29865",
+        "type": "ui_group",
+        "name": "Stats",
+        "tab": "ffb068fa7641e543",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
         "id": "713d0f0c05c07366",
         "type": "debug",
         "z": "2860ad446d60019d",
@@ -256,8 +410,8 @@
         "label": "Simulationszeit",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
-        "x": 800,
-        "y": 100,
+        "x": 1040,
+        "y": 80,
         "wires": []
     },
     {
@@ -553,8 +707,8 @@
         "y": 100,
         "wires": [
             [
-                "151b6c4c.7f7ea4",
-                "3e99093f.16f3be"
+                "3e99093f.16f3be",
+                "7a2ccee8.b11ca"
             ]
         ]
     },
@@ -592,52 +746,219 @@
         "wires": []
     },
     {
-        "id": "3861079235b4c808",
-        "type": "mqtt-broker",
+        "id": "9b4e7a9a.3232c",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
         "name": "",
-        "broker": "mqttbroker",
-        "port": "1883",
-        "clientid": "",
-        "usetls": false,
-        "compatmode": false,
-        "keepalive": "60",
-        "cleansession": true,
-        "birthTopic": "sensor/1/data",
-        "birthQos": "1",
-        "birthPayload": "",
-        "closeTopic": "",
-        "closeQos": "0",
-        "closePayload": "",
-        "willTopic": "",
-        "willQos": "0",
-        "willPayload": ""
+        "topic": "simulation/avg_waiting_time",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 450,
+        "y": 800,
+        "wires": [
+            [
+                "925fbca7.b201b"
+            ]
+        ]
     },
     {
-        "id": "3d89a586961cbace",
-        "type": "ui_group",
-        "name": "Chart-1",
-        "tab": "ffb068fa7641e543",
+        "id": "7a2ccee8.b11ca",
+        "type": "function",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "func": "time = msg.payload;\nstamp = new Date(time);\nmsg.payload = stamp\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 800,
+        "y": 100,
+        "wires": [
+            [
+                "151b6c4c.7f7ea4"
+            ]
+        ]
+    },
+    {
+        "id": "925fbca7.b201b",
+        "type": "ui_gauge",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "group": "13758b1e.e29865",
         "order": 1,
-        "disp": true,
-        "width": "6",
-        "collapse": false
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Avg waiting time",
+        "label": "s",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 1000,
+        "y": 800,
+        "wires": []
     },
     {
-        "id": "54f04762.cf06f",
-        "type": "ui_group",
-        "name": "Configuration",
-        "tab": "ffb068fa7641e543",
+        "id": "88c50026.d8671",
+        "type": "ui_chart",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "group": "13758b1e.e29865",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "label": "chart",
+        "chartType": "bar",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "20",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "x": 1010,
+        "y": 1020,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5e6889df.d1d29",
+        "type": "inject",
+        "z": "2860ad446d60019d",
+        "name": "1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "V1",
+        "payload": "10",
+        "payloadType": "num",
+        "x": 370,
+        "y": 980,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "312f59ca.7d897e",
+        "type": "inject",
+        "z": "2860ad446d60019d",
+        "name": "2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "V2",
+        "payload": "15",
+        "payloadType": "num",
+        "x": 370,
+        "y": 1060,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "e2e82400.13715",
+        "type": "function",
+        "z": "2860ad446d60019d",
+        "name": "multiChart",
+        "func": "var msg1 = {};\nvar msg2 = {};\nmsg1.topic = 'V1';\nmsg2.topic = 'V2';\n\n\nreturn [msg1, msg2];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 770,
+        "y": 1000,
+        "wires": [
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ]
+        ]
+    },
+    {
+        "id": "622048d4.151e08",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/max_waiting_time",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 460,
+        "y": 880,
+        "wires": [
+            [
+                "c17dd82d.9304e"
+            ]
+        ]
+    },
+    {
+        "id": "c17dd82d.9304e",
+        "type": "ui_text",
+        "z": "2860ad446d60019d",
+        "group": "13758b1e.e29865",
         "order": 2,
-        "disp": true,
-        "width": "6",
-        "collapse": false
-    },
-    {
-        "id": "ffb068fa7641e543",
-        "type": "ui_tab",
-        "name": "Home",
-        "icon": "dashboard",
-        "disabled": false,
-        "hidden": false
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Max waiting time",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 1020,
+        "y": 880,
+        "wires": []
     }
 ]

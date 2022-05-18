@@ -6,6 +6,10 @@ from intersection import nx, World, Intersection, Car
 from policy import tl_global_const
 from typing import *
 
+import os
+import time
+import paho.mqtt.client as mqtt
+
 white = [255, 255, 255]
 red = [255, 0, 0]
 blue = [0, 0, 255]
@@ -15,6 +19,21 @@ black = [0, 0, 0]
 green = [0, 255, 0]
 pink = [255, 192, 203]
 forest_green = [34, 139, 34]
+
+try:
+    os.environ["DISPLAY"]
+except:
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
+
+
+mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
+client = mqtt.Client("Simulation")
+client.connect(host=mqttAddr, port=1883)
+time.sleep(5)
+client.loop_start()
+print("Connected to MQTT broker: " + mqttAddr)
+
+
 
 def create_intersection_crosses(row: int, column: int, cr_width: int, cr_height: int,
                                 street_width_x: int, street_width_y: int) -> List[pygame.Rect]:
@@ -129,7 +148,7 @@ def draw_traffic_lights(screen: pygame.Surface, inter_rect: pygame.Rect, interse
 
 
 def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersections: List[Intersection],
-         all_cars: List[Car], light_crosses: List[pygame.Rect], streets: List[pygame.Rect],
+         light_crosses: List[pygame.Rect], streets: List[pygame.Rect],
          light_offset: List[int]) -> None:
     """
     main method
@@ -138,7 +157,7 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
     pygame.init()
     font = pygame.font.SysFont('Arial', 10)
     clock = pygame.time.Clock()
-
+    all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=60)
     world = World(G, intersections, all_cars, tl_global_const)
 
     while True:
@@ -170,12 +189,23 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
             else:
                 remove_count += 1
             if remove_count >= len(all_cars):
+                # all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=20)
+                # remove_count = 0
                 break
 
         if len(all_cars) == 0:
+            # all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=20)
+            remove_count = 0
             break
 
         clock.tick(2)
+
+        # print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
+        avg_waiting_time = world.get_avg_waiting_time()
+        client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
+        max_waiting_time = world.get_max_waiting_time()
+        client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2)
+        client.loop()
         print("*****************************")
 
     print("Simulation done")
@@ -203,7 +233,7 @@ if __name__ == "__main__":
     street_width_x = (screen_size_x - column * inter_width) // (column + 1)
     street_width_y = (screen_size_y - row * inter_height) // (row + 1)
     car_length = 10
-    car_num = 5
+    car_num = 50
 
     # get location of intersections and streets in pygame.Rect -> ready to draw
     intersections = create_intersection_crosses(row, column, inter_width, inter_height, street_width_x, street_width_y)
@@ -212,6 +242,6 @@ if __name__ == "__main__":
     # generate intersection objects, graph and cars
     inter_nodes = generator.generate_node(col=column, row=row, red_prob=1)
     G = generator.generate_edge(inter_nodes, col=column, row=row)
-    all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=car_num)
+    # all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=car_num)
 
-    main(screen, column, row, G, inter_nodes, all_cars, intersections, streets, light_offset)
+    main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
