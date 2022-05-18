@@ -2,7 +2,7 @@ version: "3.3"
 
 networks:
   cps:
-    external: true
+    external: false
 
 services:
   
