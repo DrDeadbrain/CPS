@@ -16,7 +16,8 @@ Ampelphasen anpassen:
 TODO: WICHTIGSTER Punkt!
 Kommunikation mit Dashboard:
     - stats müssen auch Anzahl der Autos an Kreuzungen tracken
-    - stats mit mqtt implementieren und Daten über Kanal publishen
+    - Durchsatz pro Kreuzung (Anzahl der Autos innerhalb einer bestimmten Zeitspanne)
+    - Wartezeit pro Kreuzung/Wartende Fahrzeuge pro Kreuzung?
 
 Visualisierung anpassen:
     - anderes Design für die Ampeln

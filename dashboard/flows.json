@@ -815,7 +815,7 @@
         "order": 3,
         "width": 0,
         "height": 0,
-        "label": "chart",
+        "label": "Queues",
         "chartType": "bar",
         "legend": "true",
         "xformat": "HH:mm:ss",
@@ -843,68 +843,10 @@
         ],
         "outputs": 1,
         "useDifferentColor": false,
-        "x": 1010,
-        "y": 1020,
+        "x": 1080,
+        "y": 1280,
         "wires": [
             []
-        ]
-    },
-    {
-        "id": "5e6889df.d1d29",
-        "type": "inject",
-        "z": "2860ad446d60019d",
-        "name": "1",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "V1",
-        "payload": "10",
-        "payloadType": "num",
-        "x": 370,
-        "y": 980,
-        "wires": [
-            [
-                "e2e82400.13715"
-            ]
-        ]
-    },
-    {
-        "id": "312f59ca.7d897e",
-        "type": "inject",
-        "z": "2860ad446d60019d",
-        "name": "2",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "V2",
-        "payload": "15",
-        "payloadType": "num",
-        "x": 370,
-        "y": 1060,
-        "wires": [
-            [
-                "e2e82400.13715"
-            ]
         ]
     },
     {
@@ -912,14 +854,44 @@
         "type": "function",
         "z": "2860ad446d60019d",
         "name": "multiChart",
-        "func": "var msg1 = {};\nvar msg2 = {};\nmsg1.topic = 'V1';\nmsg2.topic = 'V2';\n\n\nreturn [msg1, msg2];",
-        "outputs": 2,
+        "func": "var msg1 = {};\nvar msg2 = {};\nvar msg3 = {};\nvar msg4 = {};\nvar msg5 = {};\nvar msg6 = {};\nvar msg7 = {};\nvar msg8 = {};\nvar msg9 = {};\nvar msg10 = {};\nvar msg11 = {};\nvar msg12 = {};\n\nmsg1.topic = 'Line1';\nmsg2.topic = 'Line2';\nmsg3.topic = 'Line3';\nmsg4.topic = 'Line4';\nmsg5.topic = 'Line5';\nmsg6.topic = 'Line6';\nmsg7.topic = 'Line7';\nmsg8.topic = 'Line8';\nmsg9.topic = 'Line9';\nmsg10.topic = 'Line10';\nmsg11.topic = 'Line11';\nmsg12.topic = 'Line12';\n\nreturn [msg1, msg2, msg3, msg4, msg5, msg6, msg7 ,msg8, msg9, msg10, msg11, msg12];\n",
+        "outputs": 12,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 770,
-        "y": 1000,
+        "x": 730,
+        "y": 1300,
         "wires": [
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ],
+            [
+                "88c50026.d8671"
+            ],
             [
                 "88c50026.d8671"
             ],
@@ -960,5 +932,207 @@
         "x": 1020,
         "y": 880,
         "wires": []
+    },
+    {
+        "id": "98ed0c4d.13359",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection1/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 420,
+        "y": 1040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e8a3e08d.f78428",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection2/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 420,
+        "y": 1100,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "ca0c49c3.91a3d8",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection3/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 420,
+        "y": 1160,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "a9c8e336.8469b",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection4/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 420,
+        "y": 1220,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "ccd3c21c.787e78",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection5/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 420,
+        "y": 1280,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "bf050dbb.aacf38",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection6/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 420,
+        "y": 1340,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "e5503bec.a66e2",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection7/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 420,
+        "y": 1400,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "864fbebb.43ce6",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection8/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 420,
+        "y": 1460,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "b765b836.fd2958",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection9/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 420,
+        "y": 1520,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "9282d09c.264808",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection10/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 430,
+        "y": 1580,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "b7ad284e.3c7898",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection11/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 430,
+        "y": 1640,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
+    },
+    {
+        "id": "d7014eef.a4332",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "simulation/intersection12/queue",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 430,
+        "y": 1700,
+        "wires": [
+            [
+                "e2e82400.13715"
+            ]
+        ]
     }
 ]

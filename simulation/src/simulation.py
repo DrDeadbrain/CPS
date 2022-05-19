@@ -200,7 +200,18 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
 
         clock.tick(2)
 
-        # print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
+        # Number of cars in queue per intersection
+        id = 0
+        for i in intersections:
+            id += 1
+            queue = 0
+            for j in i.queue_all:
+                queue += len(j)
+                print("Intersection " + str(id) + ": " + str(queue))
+                client.publish(f"simulation/intersection{id}/queue", queue, qos=2)
+
+        print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
+        print("Max waiting time: {}".format(world.get_max_waiting_time()))
         avg_waiting_time = world.get_avg_waiting_time()
         client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
         max_waiting_time = world.get_max_waiting_time()

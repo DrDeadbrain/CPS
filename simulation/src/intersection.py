@@ -33,7 +33,7 @@ class Intersection:
             @param state_ns: A boolean which determine if it is green light for the north-south direction
             @param state_we: A boolean which determine if it is green light for the west-east direction
         """
-        self.id = id
+        self.id = id + 1
         self.queue_north: List[Car] = []  # queue on the north side
         self.queue_south: List[Car] = []  # queue on the south side
         self.queue_east: List[Car] = []  # queue on the east side
@@ -44,6 +44,7 @@ class Intersection:
         self.pass_in_prog: Dict[Car, Union[int, float]] = {}
         self.state_ns = state_ns
         self.state_we = state_we
+
 
 class World:
     def __init__(self, Graph: nx.DiGraph, all_intersections: List[Intersection], all_cars: List[Car],
@@ -73,7 +74,7 @@ class World:
 
                     # if the car has not reached it's final destination:
                     # place it on way to next intersection
-                    # assing previous intersection
+                    # passing previous intersection
                     car.prev_inter = car.path.pop(0)
                     if len(car.path) > 0:
                         # get edge from past to next intersection
