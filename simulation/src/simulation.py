@@ -1,16 +1,19 @@
 import json
+import threading
 
 import pygame
+import paho.mqtt.client as mqtt
 
 import coordination
 import generator
-from intersection import nx, World, Intersection, Car
+from intersection import nx, World, Intersection, Car, cargroup
 from policy import tl_global_const
 from typing import *
 
 import os
 import time
-import paho.mqtt.client as mqtt
+
+pygame.init()
 
 white = [255, 255, 255]
 red = [255, 0, 0]
@@ -21,6 +24,7 @@ black = [0, 0, 0]
 green = [0, 255, 0]
 pink = [255, 192, 203]
 forest_green = [34, 139, 34]
+
 
 try:
     os.environ["DISPLAY"]
@@ -34,7 +38,6 @@ client.connect(host=mqttAddr, port=1883)
 time.sleep(5)
 client.loop_start()
 print("Connected to MQTT broker: " + mqttAddr)
-
 
 
 def create_intersection_crosses(row: int, column: int, cr_width: int, cr_height: int,
@@ -159,8 +162,8 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
     pygame.init()
     font = pygame.font.SysFont('Arial', 10)
     clock = pygame.time.Clock()
-    all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=60)
-    world = World(G, intersections, all_cars, tl_global_const)
+    # all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=60)
+    world = World(G, intersections, cargroup, tl_global_const)
 
     while True:
         event = pygame.event.poll()
@@ -174,31 +177,23 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
             # draw lights according to state
             draw_traffic_lights(screen, light_cross, intersections[i], light_offset)
 
-        for num, car in enumerate(all_cars, 1):  # all car locations
-            location = coordination.get_location(light_crosses, intersections, car, column, row, car_length)
+        for num, car in enumerate(cargroup, 1):  # all car locations
+            if car.arrived:
+                car.kill()
+            else:
+                location = coordination.get_location(light_crosses, intersections, car, column, row, car_length)
 
-            car_num = font.render(str(num), True, [0, 0, 0])
-            screen.fill(pink, location)
-            screen.blit(car_num, location)
+                car_num = font.render(str(num), True, [0, 0, 0])
+                screen.fill(pink, location)
+                screen.blit(car_num, location)
 
         pygame.display.flip()
         world.update_all(0.8)
 
-        remove_count = 0
-        while True:
-            if all_cars[remove_count].arrived:
-                all_cars.pop(remove_count)
-            else:
-                remove_count += 1
-            if remove_count >= len(all_cars):
-                # all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=20)
-                # remove_count = 0
-                break
-
-        if len(all_cars) == 0:
-            # all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=20)
-            remove_count = 0
-            break
+        # remove_count = 0
+        # while True:
+        #     if car.arrived:
+        #         car.kill()
 
         clock.tick(2)
 
@@ -262,4 +257,11 @@ if __name__ == "__main__":
     G = generator.generate_edge(inter_nodes, col=column, row=row)
     # all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=car_num)
 
+    car_thread = threading.Thread(name="cargen", target=generator.car_generator, args=(inter_nodes, G, column, row, 5))
+    car_thread.daemon = True
+    car_thread.start()
+
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
+
+
+

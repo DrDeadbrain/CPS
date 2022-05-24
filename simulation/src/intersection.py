@@ -2,9 +2,12 @@ import random
 import networkx as nx
 import numpy as np
 from typing import *
+import pygame
+
+cargroup = pygame.sprite.Group()
 
 
-class Car:
+class Car(pygame.sprite.Sprite):
     def __init__(self, init_distance: Union[int, float], init_dest: list, path: list, id=0):
         """
             Attributes: own time, previous intersection node,
@@ -16,18 +19,22 @@ class Car:
             @param init_dest: The current intersection queue
             @param path: A list containing the reference to intersections that this car will pass
         """
+        pygame.sprite.Sprite.__init__(self)
         self.id = id
         self.waiting_time: Union[int, float] = 0  # waiting time
         self.next_inter: List[Car] = init_dest  # reference to next intersection queue
         self.prev_inter: Optional[object] = None  # reference to prev intersection queue
         self.dist_to_intersection = init_distance  # distance to next intersection
         self.path = path
-        self.crossing_time = 2 # time required to pass intersection
+        self.crossing_time = 2  # time required to pass intersection
         self.updated = False  # whether status is already updated by update_intersection method
         self.arrived = False  # has the car reached its destination
 
+        cargroup.add(self)
+
+
 class Intersection:
-    def __init__(self, state_ns: bool, state_we: bool, id = 0):
+    def __init__(self, state_ns: bool, state_we: bool, id=0):
         """
             Attributes: waiting queue, pass in progress queue, light signal boolean
             @param state_ns: A boolean which determine if it is green light for the north-south direction
@@ -47,12 +54,11 @@ class Intersection:
 
 
 class World:
-    def __init__(self, Graph: nx.DiGraph, all_intersections: List[Intersection], all_cars: List[Car],
+    def __init__(self, Graph: nx.DiGraph, all_intersections: List[Intersection], cargroup,
                  policy: Callable[[nx.DiGraph, List[Intersection], List[Car], int], None]):
         self.G = Graph
         self.all_intersections = all_intersections
-        self.all_cars = all_cars
-        self.__all_cars__ = all_cars[:]
+        self.cargroup = cargroup
         self.time: Union[int, float] = 0
         self.policy = policy
 
@@ -127,7 +133,7 @@ class World:
                         front_car.dist_to_intersection = 0
 
                     # shift all other cars by that distance
-                    for car in queue[:len(queue) -1]:
+                    for car in queue[:len(queue) - 1]:
                         car.dist_to_intersection += dist_move_back
 
             # if queue_we and green light:
@@ -156,7 +162,7 @@ class World:
                     if front_car.dist_to_intersection < 0:
                         dist_move_back = -front_car.dist_to_intersection
                         front_car.dist_to_intersection = 0
-                    for car in queue[:len(queue) -1]:
+                    for car in queue[:len(queue) - 1]:
                         car.dist_to_intersection -= dist_move_back
 
             for queue in intersection.queue_all:
@@ -172,7 +178,7 @@ class World:
                         The length of the street is measured using car length
         """
         all_arrived = True
-        for car in self.all_cars:
+        for car in self.cargroup:
             if car.arrived:
                 continue
 
@@ -203,12 +209,12 @@ class World:
         return all_arrived
 
     def exec_policy(self):
-        self.policy(self.G, self.all_intersections, self.all_cars, self.time)
+        self.policy(self.G, self.all_intersections, self.cargroup, self.time)
 
     def stats(self):
-        wait_times = [car.waiting_time for car in self.__all_cars__]
+        wait_times = [car.waiting_time for car in self.cargroup]
         total_wait_time = sum(wait_times)
-        avg_wait_time = total_wait_time / len(self.__all_cars__)
+        avg_wait_time = total_wait_time / len(self.cargroup)
         std_wait_time = np.std(wait_times)
         max_wait_time = max(wait_times)
 
@@ -218,17 +224,14 @@ class World:
         print(stat_str)
 
     def get_avg_waiting_time(self):
-        wait_times = [car.waiting_time for car in self.__all_cars__]
+        wait_times = [car.waiting_time for car in self.cargroup]
         total_wait_time = sum(wait_times)
-        avg_wait_time = total_wait_time / len(self.__all_cars__)
+        avg_wait_time = total_wait_time / len(self.cargroup)
         return avg_wait_time
 
     def get_max_waiting_time(self):
-        wait_times = [car.waiting_time for car in self.__all_cars__]
+        wait_times = [car.waiting_time for car in self.cargroup]
         max_wait_time = max(wait_times)
         return max_wait_time
 
         # TODO: send values via MQTT to dashboard + add max cars per crossing
-
-
-
