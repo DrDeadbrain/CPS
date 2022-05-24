@@ -28,6 +28,7 @@ Visualisierung anpassen:
 - autos speichern nächstes ziel
 - dieses bei ankunft an kreuzung dieser mitteilen
 --> die kreuzung kann dann bei häufung die entsprechend nächsten kreuzungen vorwarnen
+
 - queue diagramm als liniendiagramm für verlauf
 - statemachine für ampeln (statt update policy)
 - ggf docker verwerfen
