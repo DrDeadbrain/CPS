@@ -1,5 +1,36 @@
 import random
 from intersection import *
+import time
+
+
+def car_generator(intersections: List[Intersection], G: nx.DiGraph, col: int = 2, row: int = -1,
+                  max_dist: int = 5):
+    row = col if row == -1 else row
+
+    ini_fi_points = [i for i in range(0, col)]
+    ini_fi_points.extend([i * col for i in range(1, row - 1)])
+    ini_fi_points.extend([(i + 1) * col - 1 for i in range(1, row - 1)])
+    ini_fi_points.extend([i for i in range(col * (row - 1), col * row)])
+
+    num_init_points = len(ini_fi_points)
+
+    while True:
+        inf = random.sample(range(0, num_init_points), 2)
+        ini = ini_fi_points[inf[0]]
+        fi = ini_fi_points[inf[1]]
+        path = nx.shortest_path(G, intersections[ini], intersections[fi])
+
+        if ini < col:
+            destination = intersections[ini].queue_north
+        elif col * (row - 1) <= ini < col * row:
+            destination = intersections[ini].queue_south
+        elif ini in [i * col for i in range(1, row - 1)]:
+            destination = intersections[ini].queue_west
+        else:
+            destination = intersections[ini].queue_east
+
+        Car(random.randint(0, max_dist), destination, path)
+        time.sleep(0.75)
 
 
 def generate_cars(intersections: List[Intersection], G: nx.DiGraph, col: int = 2, row: int = -1, num_cars: int = 2,

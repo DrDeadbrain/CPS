@@ -18,7 +18,7 @@ def get_location(light_crosses, intersections: List[Intersection], car: Car, col
             if car.next_inter is direction:
                 location[1] = count
                 break
-        print("Debug in car-coord:", location[0], location[1], car.path[0], car.arrived)
+        # print("Debug in car-coord:", location[0], location[1], car.path[0], car.arrived)
 
         # uses the cross to find the origin, the middle
         origin = pygame.Rect(light_crosses[location[0]].x + light_crosses[location[0]].width // 2 - car_length // 2,
@@ -26,8 +26,8 @@ def get_location(light_crosses, intersections: List[Intersection], car: Car, col
                              car_length)
         # check if the car is in pass in progress
         if car in car.path[0].pass_in_prog:
-            print("The car is passing in prog")
-            print("the origin is", origin)
+            # print("The car is passing in prog")
+            # print("the origin is", origin)
             return origin
 
         # find the location of the car if it is on one of the edges, the algo should be good
