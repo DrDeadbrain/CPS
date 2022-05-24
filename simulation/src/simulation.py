@@ -1,6 +1,8 @@
+import json
 import threading
 
 import pygame
+import paho.mqtt.client as mqtt
 
 import coordination
 import generator
@@ -24,18 +26,18 @@ pink = [255, 192, 203]
 forest_green = [34, 139, 34]
 
 
-# try:
-#     os.environ["DISPLAY"]
-# except:
-#     os.environ["SDL_VIDEODRIVER"] = "dummy"
-#
-#
-# mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
-# client = mqtt.Client("Simulation")
-# client.connect(host=mqttAddr, port=1883)
-# time.sleep(5)
-# client.loop_start()
-# print("Connected to MQTT broker: " + mqttAddr)
+try:
+    os.environ["DISPLAY"]
+except:
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
+
+
+mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
+client = mqtt.Client("Simulation")
+client.connect(host=mqttAddr, port=1883)
+time.sleep(5)
+client.loop_start()
+print("Connected to MQTT broker: " + mqttAddr)
 
 
 def create_intersection_crosses(row: int, column: int, cr_width: int, cr_height: int,
@@ -196,23 +198,28 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         clock.tick(2)
 
         # Number of cars in queue per intersection
+        queue_dict = {}
         id = 0
         for i in intersections:
             id += 1
             queue = 0
             for j in i.queue_all:
                 queue += len(j)
-                print("Intersection " + str(id) + ": " + str(queue))
-                # client.publish(f"simulation/intersection{id}/queue", queue, qos=2)
-
-        # print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
-        # print("Max waiting time: {}".format(world.get_max_waiting_time()))
-        # avg_waiting_time = world.get_avg_waiting_time()
-        # client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
-        # max_waiting_time = world.get_max_waiting_time()
-        # client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2)
-        # client.loop()
-        # print("*****************************")
+            print("Intersection " + str(id) + ": " + str(queue))
+            queue_dict[str(id)] = str(queue)
+            # client.publish(f"simulation/intersection{id}/queue", queue, qos=2)
+        json_string = json.dumps(queue_dict)
+        print(json_string)
+        client.publish(f"simulation/intersection_queues", json_string, qos=2)
+        client.loop()
+        print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
+        print("Max waiting time: {}".format(world.get_max_waiting_time()))
+        avg_waiting_time = world.get_avg_waiting_time()
+        client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
+        max_waiting_time = world.get_max_waiting_time()
+        client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2)
+        client.loop()
+        print("*****************************")
 
     print("Simulation done")
     world.stats()
