@@ -33,14 +33,8 @@ def car_generator(intersections: List[Intersection], G: nx.DiGraph, col: int = 2
         time.sleep(0.75)
 
 
-def generate_cars(intersections: List[Intersection], G: nx.DiGraph, col: int = 2, row: int = -1, num_cars: int = 2,
-                  max_dist: int = 5) -> List[Car]:
-    """
-        @param intersections: list of intersections (nodes of the graph)
-        @param G: the graph
-        @param max_dist: maximum distance from the first intersection the car would pass
-        @return: list of cars
-    """
+def car_generator_rushhour(intersections: List[Intersection], G: nx.DiGraph, col: int = 2, row: int = -1,
+                           max_dist: int = 5):
     row = col if row == -1 else row
 
     ini_fi_points = [i for i in range(0, col)]
@@ -49,10 +43,9 @@ def generate_cars(intersections: List[Intersection], G: nx.DiGraph, col: int = 2
     ini_fi_points.extend([i for i in range(col * (row - 1), col * row)])
 
     num_init_points = len(ini_fi_points)
-    all_cars = []
 
-    for i in range(num_cars):
-        inf = random.sample(range(0, num_init_points), 2)
+    while True:
+        inf = [1, 7]
         ini = ini_fi_points[inf[0]]
         fi = ini_fi_points[inf[1]]
         path = nx.shortest_path(G, intersections[ini], intersections[fi])
@@ -66,9 +59,8 @@ def generate_cars(intersections: List[Intersection], G: nx.DiGraph, col: int = 2
         else:
             destination = intersections[ini].queue_east
 
-        all_cars.append(Car(random.randint(0, max_dist), destination, path))
-
-    return all_cars
+        Car(random.randint(0, max_dist), destination, path)
+        time.sleep(0.75)
 
 
 def generate_node(col: int = 2, row: int = -1, red_prob: float = 0.5) -> List[Intersection]:

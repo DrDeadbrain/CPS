@@ -201,6 +201,8 @@ class World:
 
         return all_arrived
 
+    # def update_traffic_light(self, state=0):
+
     def update_all(self, time: Union[int, float]) -> bool:
         all_arrived = self.update_cars(time)
         self.update_intersection(time)
@@ -228,7 +230,6 @@ class World:
         total_wait_time = sum(wait_times)
         avg_wait_time = total_wait_time / len(self.cargroup)
         return avg_wait_time
-
 
     def get_max_waiting_time(self):
         wait_times = [car.waiting_time for car in self.cargroup]
