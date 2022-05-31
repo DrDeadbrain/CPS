@@ -14,7 +14,7 @@ import os
 import time
 
 global NTWRK
-NTWRK = True
+NTWRK = False
 
 pygame.init()
 
@@ -220,8 +220,9 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
 
         # Number of cars in queue per intersection
         queue_dict = {}
+        id = -1
         for i in intersections:
-            id = i.id
+            id += 1
             queue = 0
             for j in i.queue_all:
                 queue += len(j)
