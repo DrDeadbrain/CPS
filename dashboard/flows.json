@@ -797,7 +797,7 @@
         "type": "function",
         "z": "2860ad446d60019d",
         "name": "",
-        "func": "msg.payload = [{\n\"series\": [\"Int1\",\"Int2\",\"Int3\",\"Int4\",\"Int5\",\"Int6\",\"Int7\",\"Int8\",\"Int9\",\"Int10\",\"Int11\",\"Int12\"],\n\"data\": [[msg.payload[\"1\"]],[msg.payload[\"2\"]],[msg.payload[\"3\"]],[msg.payload[\"4\"]],[msg.payload[\"5\"]],[msg.payload[\"6\"]],[msg.payload[\"7\"]],[msg.payload[\"8\"]],[msg.payload[\"9\"]],[msg.payload[\"10\"]],[msg.payload[\"11\"]],[msg.payload[\"12\"]]],\n\"labels\": [\"Queuesize by Intersection\"]\n}]\nreturn msg;\n",
+        "func": "msg.payload = [{\n\"series\": [\"Int0\",\"Int1\",\"Int2\",\"Int3\",\"Int4\",\"Int5\",\"Int6\",\"Int7\",\"Int8\"],\n\"data\": [[msg.payload[\"0\"]],[msg.payload[\"1\"]],[msg.payload[\"2\"]],[msg.payload[\"3\"]],[msg.payload[\"4\"]],[msg.payload[\"5\"]],[msg.payload[\"6\"]],[msg.payload[\"7\"]],[msg.payload[\"8\"]]],\n\"labels\": [\"Queuesize by Intersection\"]\n}]\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -959,23 +959,14 @@
         "z": "2860ad446d60019d",
         "d": true,
         "name": "",
-        "func": "var msg1 = {};\nvar msg2 = {};\nvar msg3 = {};\nvar msg4 = {};\nvar msg5 = {};\nvar msg6 = {};\nvar msg7 = {};\nvar msg8 = {};\nvar msg9 = {};\nvar msg10 = {};\nvar msg11 = {};\nvar msg12 = {};\n\n\nmsg1.payload = msg.payload[\"1\"]; \nmsg1.topic = 'Int1';\n\nmsg2.payload = msg.payload[\"2\"]; \nmsg2.topic = 'Int2';\n\nmsg3.payload = msg.payload[\"3\"]; \nmsg3.topic = 'Int3';\n\nmsg4.payload = msg.payload[\"4\"]; \nmsg4.topic = 'Int4';\n\nmsg5.payload = msg.payload[\"5\"]; \nmsg5.topic = 'Int5';\n\nmsg6.payload = msg.payload[\"6\"]; \nmsg6.topic = 'Int6';\n\nmsg7.payload = msg.payload[\"7\"]; \nmsg7.topic = 'Int7';\n\nmsg8.payload = msg.payload[\"8\"]; \nmsg8.topic = 'Int8';\n\nmsg9.payload = msg.payload[\"9\"]; \nmsg9.topic = 'Int9';\n\nmsg10.payload = msg.payload[\"10\"]; \nmsg10.topic = 'Int10';\n\nmsg11.payload = msg.payload[\"11\"]; \nmsg11.topic = 'Int11';\n\nmsg12.payload = msg.payload[\"12\"]; \nmsg12.topic = 'Int12';\n\nreturn [msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8, msg9, msg10, msg11, msg12];",
-        "outputs": 12,
+        "func": "var msg0 = {};\nvar msg1 = {};\nvar msg2 = {};\nvar msg3 = {};\nvar msg4 = {};\nvar msg5 = {};\nvar msg6 = {};\nvar msg7 = {};\nvar msg8 = {};\n\n\nmsg0.payload = msg.payload[\"0\"]; \nmsg0.topic = 'Int0';\n\nmsg1.payload = msg.payload[\"1\"]; \nmsg1.topic = 'Int1';\n\nmsg2.payload = msg.payload[\"2\"]; \nmsg2.topic = 'Int2';\n\nmsg3.payload = msg.payload[\"3\"]; \nmsg3.topic = 'Int3';\n\nmsg4.payload = msg.payload[\"4\"]; \nmsg4.topic = 'Int4';\n\nmsg5.payload = msg.payload[\"5\"]; \nmsg5.topic = 'Int5';\n\nmsg6.payload = msg.payload[\"6\"]; \nmsg6.topic = 'Int6';\n\nmsg7.payload = msg.payload[\"7\"]; \nmsg7.topic = 'Int7';\n\nmsg8.payload = msg.payload[\"8\"]; \nmsg8.topic = 'Int8';\n\n\nreturn [msg0,msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8];",
+        "outputs": 9,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "x": 980,
         "y": 1420,
         "wires": [
-            [
-                "131f79c8.200a6e"
-            ],
-            [
-                "131f79c8.200a6e"
-            ],
-            [
-                "131f79c8.200a6e"
-            ],
             [
                 "131f79c8.200a6e"
             ],
@@ -1010,7 +1001,7 @@
         "type": "function",
         "z": "2860ad446d60019d",
         "name": "",
-        "func": "var msg1 = {};\n\nsum = parseInt(msg.payload[\"1\"]) + parseInt(msg.payload[\"2\"]) + parseInt(msg.payload[\"3\"]) + parseInt(msg.payload[\"4\"]) + parseInt(msg.payload[\"5\"]) + parseInt(msg.payload[\"6\"]) + parseInt(msg.payload[\"7\"]) + parseInt(msg.payload[\"8\"]) + parseInt(msg.payload[\"9\"]) + parseInt(msg.payload[\"10\"]) + parseInt(msg.payload[\"11\"]) + parseInt(msg.payload[\"12\"]);\n\nvar avg = sum/12;\n\nmsg1.payload = avg; \n\nmsg1.topic = 'Average Queue Length';\n\nreturn [msg1];\n\n\n",
+        "func": "var msg1 = {};\n\nsum = (parseInt(msg.payload[\"0\"]) + parseInt(msg.payload[\"1\"]) + parseInt(msg.payload[\"2\"]) + parseInt(msg.payload[\"3\"]) + parseInt(msg.payload[\"4\"]) + parseInt(msg.payload[\"5\"]) + parseInt(msg.payload[\"6\"]) + parseInt(msg.payload[\"7\"]) + parseInt(msg.payload[\"8\"]));\n\nvar avg = sum/9;\n\nmsg1.payload = avg; \n\nmsg1.topic = 'Average Queue Length';\n\nreturn [msg1];\n\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
