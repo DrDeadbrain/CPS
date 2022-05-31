@@ -1083,8 +1083,48 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 880,
-        "y": 2020,
+        "x": 810,
+        "y": 1980,
+        "wires": []
+    },
+    {
+        "id": "159067a0.ef4648",
+        "type": "ui_button",
+        "z": "2860ad446d60019d",
+        "name": "Rush Hour Button",
+        "group": "54f04762.cf06f",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": ">>> Rush Hour <<<",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 450,
+        "y": 2100,
+        "wires": [
+            [
+                "91e6e484.d085d8"
+            ]
+        ]
+    },
+    {
+        "id": "91e6e484.d085d8",
+        "type": "mqtt out",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "topic": "button/rush_hour",
+        "qos": "",
+        "retain": "",
+        "broker": "3861079235b4c808",
+        "x": 830,
+        "y": 2100,
         "wires": []
     }
 ]

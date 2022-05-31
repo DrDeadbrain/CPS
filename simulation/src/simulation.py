@@ -14,7 +14,7 @@ import os
 import time
 
 global NTWRK
-NTWRK = False
+NTWRK = True
 
 pygame.init()
 
@@ -29,19 +29,44 @@ pink = [255, 192, 203]
 forest_green = [34, 139, 34]
 
 last_mwt = 0    # last max waiting time
+emergency_activated = False
+rush_hour_activated = False
 
 
 def on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
     print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
     print("Simulation connected to Broker")
     client.subscribe(f"button/emergency", 1)
+    client.subscribe(f"button/rush_hour", 1)
 
 
 def on_message(client, userdata, message):
-    print("*****************************")
-    print("received message =", str(message.payload.decode("utf-8")))
-    print("EMERGENCY BUTTON PRESSED")
-    print("*****************************")
+    global emergency_activated
+    global rush_hour_activated
+    if message.topic == "button/emergency":
+        if not emergency_activated:
+            emergency_activated = True
+            print("*****************************")
+            print("EMERGENCY ACTIVATED")
+            print("*****************************")
+        else:
+            emergency_activated = False
+            print("*****************************")
+            print("EMERGENCY DEACTIVATED")
+            print("*****************************")
+    if message.topic == "button/rush_hour":
+        if not rush_hour_activated:
+            rush_hour_activated = True
+            print("*****************************")
+            print("RUSH HOUR ACTIVATED")
+            print("*****************************")
+            rush_hour_thread.start()
+        else:
+            rush_hour_activated = False
+            print("*****************************")
+            print("RUSH HOUR DEACTIVATED")
+            print("*****************************")
+            rush_hour_thread.join()
 
 
 if NTWRK:
@@ -292,8 +317,8 @@ if __name__ == "__main__":
 
 # on message (from dashboard button)
 # activate thread and stop it if button is pressed again
-    # rush_hour_thread = threading.Thread(name="rush hour generation", target=generator.car_generator_rushhour, args=(inter_nodes, G, column, row, 5))
-    # rush_hour_thread.daemon = True
+    rush_hour_thread = threading.Thread(name="rush hour generation", target=generator.car_generator_rushhour, args=(inter_nodes, G, column, row, 5))
+    rush_hour_thread.daemon = True
     # rush_hour_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
