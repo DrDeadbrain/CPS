@@ -13,6 +13,9 @@ from typing import *
 import os
 import time
 
+global NTWRK
+NTWRK = False
+
 pygame.init()
 
 white = [255, 255, 255]
@@ -25,19 +28,19 @@ green = [0, 255, 0]
 pink = [255, 192, 203]
 forest_green = [34, 139, 34]
 
+if NTWRK:
+    try:
+        os.environ["DISPLAY"]
+    except:
+        os.environ["SDL_VIDEODRIVER"] = "dummy"
 
-try:
-    os.environ["DISPLAY"]
-except:
-    os.environ["SDL_VIDEODRIVER"] = "dummy"
 
-
-mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
-client = mqtt.Client("Simulation")
-client.connect(host=mqttAddr, port=1883)
-time.sleep(5)
-client.loop_start()
-print("Connected to MQTT broker: " + mqttAddr)
+    mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
+    client = mqtt.Client("Simulation")
+    client.connect(host=mqttAddr, port=1883)
+    time.sleep(5)
+    client.loop_start()
+    print("Connected to MQTT broker: " + mqttAddr)
 
 
 def create_intersection_crosses(row: int, column: int, cr_width: int, cr_height: int,
@@ -209,13 +212,18 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
             queue_dict[str(id)] = str(queue)
         json_string = json.dumps(queue_dict)
         print(json_string)
-        client.publish(f"simulation/intersection_queues", json_string, qos=2)
+        max_waiting_time = world.get_max_waiting_time()
+        avg_waiting_time = world.get_avg_waiting_time()
+        if NTWRK:
+            client.publish(f"simulation/intersection_queues", json_string, qos=2)
+            client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2)
+            client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
         print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
         print("Max waiting time: {}".format(world.get_max_waiting_time()))
-        avg_waiting_time = world.get_avg_waiting_time()
-        client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
-        max_waiting_time = world.get_max_waiting_time()
-        client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2)
+
+
+
+
         print("*****************************")
 
     print("Simulation done")
@@ -235,7 +243,7 @@ if __name__ == "__main__":
     screen_size_x = 800
     screen_size_y = 800
     column = 3
-    row = 4
+    row = 3
     screen = pygame.display.set_mode([screen_size_x, screen_size_y])
     inter_width = 50
     inter_height = 50
@@ -258,7 +266,29 @@ if __name__ == "__main__":
     car_thread.daemon = True
     car_thread.start()
 
+# on message (from dashboard button)
+# activate thread and stop it if button is pressed again
+    # rush_hour_thread = threading.Thread(name="rush hour generation", target=generator.car_generator_rushhour, args=(inter_nodes, G, column, row, 5))
+    # rush_hour_thread.daemon = True
+    # rush_hour_thread.start()
+
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
 
+# TODO: 1 client for all cars -> rush hour cars get var set. If rush hour car triggers message -> activate green wave on their path for time x
+# TODO: rush hour thread for time x when button is pressed
+# TODO: state machine to manipulate states of traffic lights
+
+# ----------------------------- Intersection Setup -----------------------------
+# -----   ------------ 6 -------------- 7 --------------- 8   ------------------
+# -----                |                |                 |                 ----
+# -----                |                |                 |                 ----
+# -----   ------------ 3 -------------- 4 --------------- 5   ------------------
+# -----                |                |                 |                 ----
+# -----                |                |                 |                 ----
+# -----   ------------ 0 -------------- 1 --------------- 2   ------------------
+# ------------------------------------------------------------------------------
+
+
+# Rush Hour Path --> init(7) -> (8) -> (5) -> (2)
 
 

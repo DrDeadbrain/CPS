@@ -201,6 +201,8 @@ class World:
 
         return all_arrived
 
+    # def update_traffic_light(self, state=0):
+
     def update_all(self, time: Union[int, float]) -> bool:
         all_arrived = self.update_cars(time)
         self.update_intersection(time)
