@@ -229,6 +229,7 @@ class World:
         avg_wait_time = total_wait_time / len(self.cargroup)
         return avg_wait_time
 
+
     def get_max_waiting_time(self):
         wait_times = [car.waiting_time for car in self.cargroup]
         max_wait_time = max(wait_times)

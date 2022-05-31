@@ -25,15 +25,31 @@ green = [0, 255, 0]
 pink = [255, 192, 203]
 forest_green = [34, 139, 34]
 
+last_mwt = 0
+
+
+def on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
+    print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
+    print("Simulation connected to Broker")
+    client.subscribe(f"button/emergency", 1)
+
+
+def on_message(client, userdata, message):
+    print("*****************************")
+    print("received message =", str(message.payload.decode("utf-8")))
+    print("EMERGENCY BUTTON PRESSED")
+    print("*****************************")
+
 
 try:
     os.environ["DISPLAY"]
 except:
     os.environ["SDL_VIDEODRIVER"] = "dummy"
 
-
 mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
 client = mqtt.Client("Simulation")
+client.on_connect = on_connect
+client.on_message = on_message
 client.connect(host=mqttAddr, port=1883)
 time.sleep(5)
 client.loop_start()
@@ -159,6 +175,7 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
     main method
     entry point
     """
+    global last_mwt
     pygame.init()
     font = pygame.font.SysFont('Arial', 10)
     clock = pygame.time.Clock()
@@ -210,12 +227,19 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         json_string = json.dumps(queue_dict)
         print(json_string)
         client.publish(f"simulation/intersection_queues", json_string, qos=2)
-        print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
-        print("Max waiting time: {}".format(world.get_max_waiting_time()))
+
+        # average waiting time
         avg_waiting_time = world.get_avg_waiting_time()
         client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
+        print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
+
+        # max waiting time
         max_waiting_time = world.get_max_waiting_time()
-        client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2)
+        curr_mwt = max(max_waiting_time, last_mwt)
+        last_mwt = curr_mwt
+        client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)
+        print("Max waiting time: {}".format(world.get_max_waiting_time()))
+
         print("*****************************")
 
     print("Simulation done")
@@ -259,6 +283,3 @@ if __name__ == "__main__":
     car_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
-
-
-
