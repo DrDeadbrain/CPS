@@ -8,7 +8,7 @@ cargroup = pygame.sprite.Group()
 
 
 class Car(pygame.sprite.Sprite):
-    def __init__(self, init_distance: Union[int, float], init_dest: list, path: list, id=0):
+    def __init__(self, init_distance: Union[int, float], init_dest: list, path: list,emergency: bool,  id=0):
         """
             Attributes: own time, previous intersection node,
                         current intersection queue, length of the edge it is on
@@ -21,6 +21,7 @@ class Car(pygame.sprite.Sprite):
         """
         pygame.sprite.Sprite.__init__(self)
         self.id = id
+        self.emergency = emergency
         self.waiting_time: Union[int, float] = 0  # waiting time
         self.next_inter: List[Car] = init_dest  # reference to next intersection queue
         self.prev_inter: Optional[object] = None  # reference to prev intersection queue
@@ -49,18 +50,18 @@ class Intersection:
                           self.queue_west, self.queue_east]  # all queues
         # pass in progress queue (cars that are currently passing the intersection)
         self.pass_in_prog: Dict[Car, Union[int, float]] = {}
+        self.cycle_time = 10
+        self.time_count = 0
         self.state_ns = state_ns
         self.state_we = state_we
 
 
 class World:
-    def __init__(self, Graph: nx.DiGraph, all_intersections: List[Intersection], cargroup,
-                 policy: Callable[[nx.DiGraph, List[Intersection], List[Car], int], None]):
+    def __init__(self, Graph: nx.DiGraph, all_intersections: List[Intersection], cargroup):
         self.G = Graph
         self.all_intersections = all_intersections
         self.cargroup = cargroup
         self.time: Union[int, float] = 0
-        self.policy = policy
 
     def update_intersection(self, time: Union[int, float]):
         """
@@ -201,17 +202,21 @@ class World:
 
         return all_arrived
 
-    # def update_traffic_light(self, state=0):
+    def update_traffic_light(self):
+        for inter in self.all_intersections:
+            if inter.time_count == inter.cycle_time:
+                inter.state_we = not inter.state_we
+                inter.state_ns = not inter.state_ns
+                inter.time_count = 0
+            else:
+                inter.time_count += 1
 
     def update_all(self, time: Union[int, float]) -> bool:
         all_arrived = self.update_cars(time)
         self.update_intersection(time)
         self.time += time
-        self.exec_policy()
+        self.update_traffic_light()
         return all_arrived
-
-    def exec_policy(self):
-        self.policy(self.G, self.all_intersections, self.cargroup, self.time)
 
     def stats(self):
         wait_times = [car.waiting_time for car in self.cargroup]

@@ -14,29 +14,6 @@ services:
       cps:
         aliases:
           - mqttbroker
-
-  tickgen:
-    build: "./tickgen"
-    environment:
-      - MQTT_ADDR=mqttbroker
-    networks:
-      - cps
-
-  sensor1:
-    build: "./chaos_sensor"
-    environment:
-      - MQTT_ADDR=mqttbroker
-      - Sensor_ID=s1
-    networks:
-      - cps
-
-  sensor2:
-    build: "./chaos_sensor"
-    environment:
-      - MQTT_ADDR=mqttbroker
-      - Sensor_ID=s2
-    networks:
-      - cps
   
   dashboard:
     build: "./dashboard"
