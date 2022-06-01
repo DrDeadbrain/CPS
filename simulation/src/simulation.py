@@ -7,14 +7,13 @@ import paho.mqtt.client as mqtt
 import coordination
 import generator
 from intersection import nx, World, Intersection, Car, cargroup
-from policy import tl_global_const
 from typing import *
 
 import os
 import time
 
 global NTWRK
-NTWRK = True
+NTWRK = False
 
 pygame.init()
 
@@ -33,14 +32,14 @@ emergency_activated = False
 rush_hour_activated = False
 
 
-def on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
+def on_connect_button(client, userdata, flags, rc):  # The callback for when the client connects to the broker
     print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
     print("Simulation connected to Broker")
     client.subscribe(f"button/emergency", 1)
     client.subscribe(f"button/rush_hour", 1)
 
 
-def on_message(client, userdata, message):
+def on_message_button(button_client, userdata, message):
     global emergency_activated
     global rush_hour_activated
     if message.topic == "button/emergency":
@@ -49,11 +48,13 @@ def on_message(client, userdata, message):
             print("*****************************")
             print("EMERGENCY ACTIVATED")
             print("*****************************")
+            emergency_car_thread.start()
         else:
             emergency_activated = False
             print("*****************************")
             print("EMERGENCY DEACTIVATED")
             print("*****************************")
+            emergency_car_thread.join()
     if message.topic == "button/rush_hour":
         if not rush_hour_activated:
             rush_hour_activated = True
@@ -76,12 +77,15 @@ if NTWRK:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
 
     mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
-    client = mqtt.Client("Simulation")
-    client.on_connect = on_connect
-    client.on_message = on_message
-    client.connect(host=mqttAddr, port=1883)
+    publish_client = mqtt.Client("Sim Publisher")
+    button_client = mqtt.Client("Simulation buttons")
+    button_client.on_connect = on_connect_button
+    button_client.on_message = on_message_button
+    button_client.connect(host=mqttAddr, port=1883)
+    publish_client.connect(host=mqttAddr, port=1883)
     time.sleep(5)
-    client.loop_start()
+    publish_client.loop_start()
+    button_client.loop_start()
     print("Connected to MQTT broker: " + mqttAddr)
 
 
@@ -208,8 +212,7 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
     pygame.init()
     font = pygame.font.SysFont('Arial', 10)
     clock = pygame.time.Clock()
-    # all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=60)
-    world = World(G, intersections, cargroup, tl_global_const)
+    world = World(G, intersections, cargroup)
 
     while True:
         event = pygame.event.poll()
@@ -228,10 +231,14 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
                 car.kill()
             else:
                 location = coordination.get_location(light_crosses, intersections, car, column, row, car_length)
-
-                car_num = font.render(str(num), True, [0, 0, 0])
-                screen.fill(pink, location)
-                screen.blit(car_num, location)
+                if car.emergency:
+                    car_num = font.render(str(num), True, [255, 0, 0])
+                    screen.fill(red, location)
+                    screen.blit(car_num, location)
+                else:
+                    car_num = font.render(str(num), True, [0, 0, 0])
+                    screen.fill(pink, location)
+                    screen.blit(car_num, location)
 
         pygame.display.flip()
         world.update_all(0.8)
@@ -268,10 +275,10 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
 
         # publishing via MQTT
         if NTWRK:
-            client.publish(f"simulation/intersection_queues", json_string, qos=2)
+            publish_client.publish(f"simulation/intersection_queues", json_string, qos=2)
             # client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2) # max value of currently driving cars
-            client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)           # all time max value
-            client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
+            publish_client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)           # all time max value
+            publish_client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
 
         print("*****************************")
 
@@ -313,19 +320,28 @@ if __name__ == "__main__":
 
     car_thread = threading.Thread(name="cargen", target=generator.car_generator, args=(inter_nodes, G, column, row, 5))
     car_thread.daemon = True
-    car_thread.start()
+    # car_thread.start()
 
 # on message (from dashboard button)
 # activate thread and stop it if button is pressed again
-    rush_hour_thread = threading.Thread(name="rush hour generation", target=generator.car_generator_rushhour, args=(inter_nodes, G, column, row, 5))
+    rush_hour_thread = threading.Thread(name="rush hour generation", target=generator.car_generator_rushhour,
+                                        args=(inter_nodes, G, column, row, 5))
     rush_hour_thread.daemon = True
-    # rush_hour_thread.start()
+
+    emergency_car_thread = threading.Thread(name="Emergency car generation", target=generator.emergency_car_generator,
+                                            args=(inter_nodes, G, column, row, 5))
+    emergency_car_thread.daemon = True
+
+    rush_hour_thread.start()
+    #emergency_car_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
 
 # TODO: 1 client for all cars -> rush hour cars get var set. If rush hour car triggers message -> activate green wave on their path for time x
 # TODO: rush hour thread for time x when button is pressed
-# TODO: state machine to manipulate states of traffic lights
+# TODO: cycle time for intersection
+# TODO: update_intersection in world: for each intersection: if time_count == cycle_time -> toggle states, else: time_count++
+# TODO: --> on message switch state to let rush hour cars pass
 
 # ----------------------------- Intersection Setup -----------------------------
 # -----   ------------ 6 -------------- 7 --------------- 8   ------------------
