@@ -400,7 +400,7 @@
         "qos": "2",
         "datatype": "auto",
         "broker": "3861079235b4c808",
-        "x": 450,
+        "x": 460,
         "y": 380,
         "wires": [
             [
@@ -664,13 +664,13 @@
         "id": "925fbca7.b201b",
         "type": "ui_gauge",
         "z": "2860ad446d60019d",
-        "name": "",
+        "name": "Avg. Waiting Time",
         "group": "6aed43c2.25eb1c",
         "order": 1,
         "width": 0,
         "height": 0,
         "gtype": "gage",
-        "title": "Avg waiting time",
+        "title": "Avg. Waiting Time",
         "label": "s",
         "format": "{{value}}",
         "min": 0,
@@ -682,7 +682,7 @@
         ],
         "seg1": "",
         "seg2": "",
-        "x": 1060,
+        "x": 1070,
         "y": 980,
         "wires": []
     },
@@ -696,7 +696,7 @@
         "datatype": "auto",
         "broker": "3861079235b4c808",
         "x": 480,
-        "y": 1120,
+        "y": 1160,
         "wires": [
             [
                 "c17dd82d.9304e"
@@ -716,7 +716,7 @@
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "x": 1050,
-        "y": 1120,
+        "y": 1160,
         "wires": []
     },
     {
@@ -729,7 +729,7 @@
         "datatype": "auto",
         "broker": "3861079235b4c808",
         "x": 490,
-        "y": 1260,
+        "y": 1380,
         "wires": [
             [
                 "9b250f21.ddb278"
@@ -774,7 +774,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "x": 1240,
-        "y": 1260,
+        "y": 1380,
         "wires": [
             []
         ]
@@ -788,7 +788,7 @@
         "action": "",
         "pretty": false,
         "x": 770,
-        "y": 1260,
+        "y": 1380,
         "wires": [
             [
                 "d1f48326.6fadb",
@@ -808,7 +808,7 @@
         "initialize": "",
         "finalize": "",
         "x": 980,
-        "y": 1260,
+        "y": 1380,
         "wires": [
             [
                 "1ae479d.0dc9106"
@@ -819,7 +819,7 @@
         "id": "d9fb3cd.198fcc",
         "type": "ui_switch",
         "z": "2860ad446d60019d",
-        "name": "",
+        "name": "Switch coordinated/uncoordinated",
         "label": "Switch coordinated/uncoordinated",
         "tooltip": "",
         "group": "54f04762.cf06f",
@@ -841,34 +841,11 @@
         "offcolor": "",
         "animate": false,
         "x": 500,
-        "y": 1700,
+        "y": 1880,
         "wires": [
-            []
-        ]
-    },
-    {
-        "id": "9977398e.eeaed",
-        "type": "ui_slider",
-        "z": "2860ad446d60019d",
-        "d": true,
-        "name": "",
-        "label": "Number of Cars",
-        "tooltip": "",
-        "group": "54f04762.cf06f",
-        "order": 7,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "outs": "all",
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "x": 440,
-        "y": 1780,
-        "wires": [
-            []
+            [
+                "88a8f975.0af82"
+            ]
         ]
     },
     {
@@ -891,30 +868,13 @@
         "topic": "topic",
         "topicType": "msg",
         "x": 450,
-        "y": 1960,
+        "y": 2080,
         "wires": [
             [
                 "263b7485.e30434",
                 "ca742dc0.e1eae8"
             ]
         ]
-    },
-    {
-        "id": "7c037eaf.cd88e",
-        "type": "ui_text",
-        "z": "2860ad446d60019d",
-        "d": true,
-        "group": "54f04762.cf06f",
-        "order": 8,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "Number of Cars",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "x": 440,
-        "y": 1840,
-        "wires": []
     },
     {
         "id": "131f79c8.200a6e",
@@ -955,7 +915,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "x": 1260,
-        "y": 1400,
+        "y": 1520,
         "wires": [
             []
         ]
@@ -972,7 +932,7 @@
         "initialize": "",
         "finalize": "",
         "x": 980,
-        "y": 1420,
+        "y": 1540,
         "wires": [
             [
                 "131f79c8.200a6e"
@@ -1014,7 +974,7 @@
         "initialize": "",
         "finalize": "",
         "x": 980,
-        "y": 1580,
+        "y": 1700,
         "wires": [
             [
                 "a944b29.e6f795"
@@ -1059,7 +1019,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "x": 1250,
-        "y": 1580,
+        "y": 1700,
         "wires": [
             []
         ]
@@ -1073,8 +1033,8 @@
         "qos": "",
         "retain": "",
         "broker": "3861079235b4c808",
-        "x": 830,
-        "y": 1960,
+        "x": 1050,
+        "y": 2080,
         "wires": []
     },
     {
@@ -1097,7 +1057,7 @@
         "topic": "topic",
         "topicType": "msg",
         "x": 450,
-        "y": 2220,
+        "y": 2300,
         "wires": [
             [
                 "91e6e484.d085d8",
@@ -1114,8 +1074,8 @@
         "qos": "",
         "retain": "",
         "broker": "3861079235b4c808",
-        "x": 830,
-        "y": 2220,
+        "x": 1050,
+        "y": 2300,
         "wires": []
     },
     {
@@ -1129,7 +1089,7 @@
         "initialize": "",
         "finalize": "",
         "x": 180,
-        "y": 2040,
+        "y": 2160,
         "wires": [
             [
                 "494fa0bb.5bf72"
@@ -1147,7 +1107,7 @@
         "initialize": "",
         "finalize": "",
         "x": 180,
-        "y": 2300,
+        "y": 2380,
         "wires": [
             [
                 "159067a0.ef4648"
@@ -1158,7 +1118,7 @@
         "id": "6f9adbd5.4f0734",
         "type": "ui_chart",
         "z": "2860ad446d60019d",
-        "name": "",
+        "name": "Avg. Waiting Time",
         "group": "6aed43c2.25eb1c",
         "order": 3,
         "width": 0,
@@ -1191,10 +1151,23 @@
         ],
         "outputs": 1,
         "useDifferentColor": false,
-        "x": 1050,
+        "x": 1070,
         "y": 1040,
         "wires": [
             []
         ]
+    },
+    {
+        "id": "88a8f975.0af82",
+        "type": "mqtt out",
+        "z": "2860ad446d60019d",
+        "name": "switch/coordinated",
+        "topic": "switch/coordinated",
+        "qos": "",
+        "retain": "",
+        "broker": "3861079235b4c808",
+        "x": 1050,
+        "y": 1880,
+        "wires": []
     }
 ]

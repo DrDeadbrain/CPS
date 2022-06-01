@@ -33,6 +33,9 @@ def car_generator(intersections: List[Intersection], G: nx.DiGraph, col: int = 2
         time.sleep(0.75)
 
 
+rush_hour_active = True
+
+
 def car_generator_rushhour(intersections: List[Intersection], G: nx.DiGraph, col: int = 2, row: int = -1,
                            max_dist: int = 5):
     row = col if row == -1 else row
@@ -44,7 +47,7 @@ def car_generator_rushhour(intersections: List[Intersection], G: nx.DiGraph, col
 
     num_init_points = len(ini_fi_points)
 
-    while True:
+    while rush_hour_active:
         inf = [1, 7]
         ini = ini_fi_points[inf[0]]
         fi = ini_fi_points[inf[1]]

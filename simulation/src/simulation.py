@@ -38,6 +38,7 @@ def on_connect(client, userdata, flags, rc):  # The callback for when the client
     print("Simulation connected to Broker")
     client.subscribe(f"button/emergency", 1)
     client.subscribe(f"button/rush_hour", 1)
+    client.subscribe(f"switch/coordinated", 1)
 
 
 def on_message(client, userdata, message):
@@ -60,13 +61,25 @@ def on_message(client, userdata, message):
             print("*****************************")
             print("RUSH HOUR ACTIVATED")
             print("*****************************")
+            generator.rush_hour_active = True
             rush_hour_thread.start()
         else:
             rush_hour_activated = False
             print("*****************************")
             print("RUSH HOUR DEACTIVATED")
             print("*****************************")
-            rush_hour_thread.join()
+            # rush_hour_thread.join()
+            generator.rush_hour_active = False
+    if message.topic == "switch/coordinated":
+        converted = message.payload.decode("utf-8")
+        if converted == "true":
+            print("*****************************")
+            print("SWITCH TO COORDINATED")
+            print("*****************************")
+        else:
+            print("*****************************")
+            print("SWITCH TO UNCOORDINATED")
+            print("*****************************")
 
 
 if NTWRK:
