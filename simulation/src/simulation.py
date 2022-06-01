@@ -126,48 +126,48 @@ if NTWRK:
 
     # for each intersection
     inter1_client = mqtt.Client("Intersection1 Client")
-    inter1_client.on_connect = on_connect_intersection()
-    inter1_client.on_message = on_message_intersection()
+    inter1_client.on_connect = on_connect_intersection
+    inter1_client.on_message = on_message_intersection
     inter1_client.connect(host=mqttAddr, port=1883)
 
     inter2_client = mqtt.Client("Intersection2 Client")
-    inter2_client.on_connect = on_connect_intersection()
-    inter2_client.on_message = on_message_intersection()
+    inter2_client.on_connect = on_connect_intersection
+    inter2_client.on_message = on_message_intersection
     inter2_client.connect(host=mqttAddr, port=1883)
 
     inter3_client = mqtt.Client("Intersection3 Client")
-    inter3_client.on_connect = on_connect_intersection()
-    inter3_client.on_message = on_message_intersection()
+    inter3_client.on_connect = on_connect_intersection
+    inter3_client.on_message = on_message_intersection
     inter3_client.connect(host=mqttAddr, port=1883)
 
     inter4_client = mqtt.Client("Intersection4 Client")
-    inter4_client.on_connect = on_connect_intersection()
-    inter4_client.on_message = on_message_intersection()
+    inter4_client.on_connect = on_connect_intersection
+    inter4_client.on_message = on_message_intersection
     inter4_client.connect(host=mqttAddr, port=1883)
 
     inter5_client = mqtt.Client("Intersection5 Client")
-    inter5_client.on_connect = on_connect_intersection()
-    inter5_client.on_message = on_message_intersection()
+    inter5_client.on_connect = on_connect_intersection
+    inter5_client.on_message = on_message_intersection
     inter5_client.connect(host=mqttAddr, port=1883)
 
     inter6_client = mqtt.Client("Intersection6 Client")
-    inter6_client.on_connect = on_connect_intersection()
-    inter6_client.on_message = on_message_intersection()
+    inter6_client.on_connect = on_connect_intersection
+    inter6_client.on_message = on_message_intersection
     inter6_client.connect(host=mqttAddr, port=1883)
 
     inter7_client = mqtt.Client("Intersection7 Client")
-    inter7_client.on_connect = on_connect_intersection()
-    inter7_client.on_message = on_message_intersection()
+    inter7_client.on_connect = on_connect_intersection
+    inter7_client.on_message = on_message_intersection
     inter7_client.connect(host=mqttAddr, port=1883)
 
     inter8_client = mqtt.Client("Intersection8 Client")
-    inter8_client.on_connect = on_connect_intersection()
-    inter8_client.on_message = on_message_intersection()
+    inter8_client.on_connect = on_connect_intersection
+    inter8_client.on_message = on_message_intersection
     inter8_client.connect(host=mqttAddr, port=1883)
 
     inter9_client = mqtt.Client("Intersection9 Client")
-    inter9_client.on_connect = on_connect_intersection()
-    inter9_client.on_message = on_message_intersection()
+    inter9_client.on_connect = on_connect_intersection
+    inter9_client.on_message = on_message_intersection
     inter9_client.connect(host=mqttAddr, port=1883)
 
     time.sleep(5)
@@ -364,7 +364,7 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
 
         # average waiting time
         avg_waiting_time = world.get_avg_waiting_time()
-        print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
+        print("Avg. waiting time: {}".format(avg_waiting_time))
 
         # max waiting time
         max_waiting_time = world.get_max_waiting_time()
@@ -372,12 +372,17 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         last_mwt = curr_mwt
         print("Max waiting time: {}".format(curr_mwt))
 
+        # emergency car waiting time
+        emergency_waiting_time = world.get_emergency_waiting_time()
+        print("Emergency waiting time: {}".format(emergency_waiting_time))
+
         # publishing via MQTT
         if NTWRK:
             publish_client.publish(f"simulation/intersection_queues", json_string, qos=2)
             # client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2) # max value of currently driving cars
             publish_client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)  # all time max value
             publish_client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
+            publish_client.publish(f"simulation/emergency_waiting_time", emergency_waiting_time, qos=2)
 
         print("*****************************")
 

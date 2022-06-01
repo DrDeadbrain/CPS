@@ -247,4 +247,12 @@ class World:
             max_wait_time = max(wait_times)
         return max_wait_time
 
+    def get_emergency_waiting_time(self):
+        waiting_time = 0
+        for car in self.cargroup:
+            if car.emergency:
+                waiting_time = car.waiting_time
+        return waiting_time
+
+
         # TODO: send values via MQTT to dashboard + add max cars per crossing
