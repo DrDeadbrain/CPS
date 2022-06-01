@@ -362,7 +362,7 @@
         "type": "ui_text",
         "z": "2860ad446d60019d",
         "group": "54f04762.cf06f",
-        "order": 7,
+        "order": 1,
         "width": 0,
         "height": 0,
         "name": "",
@@ -377,8 +377,9 @@
         "id": "35dcedf9.b67dea",
         "type": "ui_text",
         "z": "2860ad446d60019d",
+        "d": true,
         "group": "54f04762.cf06f",
-        "order": 1,
+        "order": 5,
         "width": 0,
         "height": 0,
         "name": "",
@@ -393,6 +394,7 @@
         "id": "7d0eb526.24f5bc",
         "type": "mqtt in",
         "z": "2860ad446d60019d",
+        "d": true,
         "name": "",
         "topic": "tickgen/speed_factor",
         "qos": "2",
@@ -410,11 +412,12 @@
         "id": "e3371d61.46b3b8",
         "type": "ui_slider",
         "z": "2860ad446d60019d",
+        "d": true,
         "name": "",
         "label": "Simulationsgeschwindigkeit",
         "tooltip": "",
         "group": "54f04762.cf06f",
-        "order": 2,
+        "order": 6,
         "width": 0,
         "height": 0,
         "passthru": true,
@@ -436,6 +439,7 @@
         "id": "36c10c04.a003f4",
         "type": "mqtt out",
         "z": "2860ad446d60019d",
+        "d": true,
         "name": "tickgen/speed_factor",
         "topic": "tickgen/speed_factor",
         "qos": "",
@@ -633,7 +637,8 @@
         "y": 980,
         "wires": [
             [
-                "925fbca7.b201b"
+                "925fbca7.b201b",
+                "6f9adbd5.4f0734"
             ]
         ]
     },
@@ -691,7 +696,7 @@
         "datatype": "auto",
         "broker": "3861079235b4c808",
         "x": 480,
-        "y": 1060,
+        "y": 1120,
         "wires": [
             [
                 "c17dd82d.9304e"
@@ -711,7 +716,7 @@
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "x": 1050,
-        "y": 1060,
+        "y": 1120,
         "wires": []
     },
     {
@@ -818,7 +823,7 @@
         "label": "Switch coordinated/uncoordinated",
         "tooltip": "",
         "group": "54f04762.cf06f",
-        "order": 3,
+        "order": 2,
         "width": 0,
         "height": 0,
         "passthru": true,
@@ -845,11 +850,12 @@
         "id": "9977398e.eeaed",
         "type": "ui_slider",
         "z": "2860ad446d60019d",
+        "d": true,
         "name": "",
         "label": "Number of Cars",
         "tooltip": "",
         "group": "54f04762.cf06f",
-        "order": 4,
+        "order": 7,
         "width": 0,
         "height": 0,
         "passthru": true,
@@ -871,25 +877,25 @@
         "z": "2860ad446d60019d",
         "name": "Emergency Button",
         "group": "54f04762.cf06f",
-        "order": 6,
+        "order": 3,
         "width": 0,
         "height": 0,
         "passthru": false,
-        "label": "Emergency",
+        "label": ">>> Emergency <<<",
         "tooltip": "",
-        "color": "blue",
-        "bgcolor": "red",
+        "color": "{{msg.payload.Color}}",
+        "bgcolor": "{{msg.payload.Background}}",
         "icon": "",
-        "payload": "",
-        "payloadType": "str",
+        "payload": "get(state)",
+        "payloadType": "flow",
         "topic": "topic",
         "topicType": "msg",
         "x": 450,
-        "y": 1900,
+        "y": 1960,
         "wires": [
             [
                 "263b7485.e30434",
-                "4c34478f.d6c528"
+                "ca742dc0.e1eae8"
             ]
         ]
     },
@@ -897,8 +903,9 @@
         "id": "7c037eaf.cd88e",
         "type": "ui_text",
         "z": "2860ad446d60019d",
+        "d": true,
         "group": "54f04762.cf06f",
-        "order": 5,
+        "order": 8,
         "width": 0,
         "height": 0,
         "name": "",
@@ -1066,25 +1073,8 @@
         "qos": "",
         "retain": "",
         "broker": "3861079235b4c808",
-        "x": 820,
-        "y": 1900,
-        "wires": []
-    },
-    {
-        "id": "4c34478f.d6c528",
-        "type": "debug",
-        "z": "2860ad446d60019d",
-        "name": "Emergency Button",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 810,
-        "y": 1980,
+        "x": 830,
+        "y": 1960,
         "wires": []
     },
     {
@@ -1093,24 +1083,25 @@
         "z": "2860ad446d60019d",
         "name": "Rush Hour Button",
         "group": "54f04762.cf06f",
-        "order": 7,
+        "order": 4,
         "width": 0,
         "height": 0,
         "passthru": false,
         "label": ">>> Rush Hour <<<",
         "tooltip": "",
-        "color": "",
-        "bgcolor": "",
+        "color": "{{msg.payload.Color}}",
+        "bgcolor": "{{msg.payload.Background}}",
         "icon": "",
-        "payload": "",
-        "payloadType": "str",
+        "payload": "get(state)",
+        "payloadType": "flow",
         "topic": "topic",
         "topicType": "msg",
         "x": 450,
-        "y": 2100,
+        "y": 2220,
         "wires": [
             [
-                "91e6e484.d085d8"
+                "91e6e484.d085d8",
+                "d5c4ceb9.c1cde8"
             ]
         ]
     },
@@ -1124,7 +1115,86 @@
         "retain": "",
         "broker": "3861079235b4c808",
         "x": 830,
-        "y": 2100,
+        "y": 2220,
         "wires": []
+    },
+    {
+        "id": "ca742dc0.e1eae8",
+        "type": "function",
+        "z": "2860ad446d60019d",
+        "name": "Change Button Color",
+        "func": "if(flow.get('state') == \"ON\") {\n    flow.set('state',\"OFF\");\n    msg.payload = JSON.parse('{\"Color\":\"white\",\"Background\":\"#0094ce\",\"State\":\"OFF\"}');\n}\nelse {\n    flow.set('state', \"ON\");\n    msg.payload = JSON.parse('{\"Color\":\"blue\",\"Background\":\"red\",\"State\":\"ON\"}');\n}\nreturn [msg];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 180,
+        "y": 2040,
+        "wires": [
+            [
+                "494fa0bb.5bf72"
+            ]
+        ]
+    },
+    {
+        "id": "d5c4ceb9.c1cde8",
+        "type": "function",
+        "z": "2860ad446d60019d",
+        "name": "Change Button Color",
+        "func": "if(flow.get('state') == \"ON\") {\n    flow.set('state',\"OFF\");\n    msg.payload = JSON.parse('{\"Color\":\"white\",\"Background\":\"#0094ce\",\"State\":\"OFF\"}');\n}\nelse {\n    flow.set('state', \"ON\");\n    msg.payload = JSON.parse('{\"Color\":\"blue\",\"Background\":\"orange\",\"State\":\"ON\"}');\n}\nreturn [msg];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 180,
+        "y": 2300,
+        "wires": [
+            [
+                "159067a0.ef4648"
+            ]
+        ]
+    },
+    {
+        "id": "6f9adbd5.4f0734",
+        "type": "ui_chart",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "group": "6aed43c2.25eb1c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "label": "Avg. Waiting Time",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "x": 1050,
+        "y": 1040,
+        "wires": [
+            []
+        ]
     }
 ]

@@ -92,8 +92,6 @@ def car_generator_rushhour(intersections: List[Intersection], G: nx.DiGraph, col
 
 
 def generate_node(col: int = 2, row: int = -1, red_prob: float = 0.5) -> List[Intersection]:
-    # TODO: remove random red/ green light , make var for green light accesible
-    i = 0
     row = col if row == -1 else row
     red = True if random.random() > red_prob else False
     return [Intersection(red, not red, i) for i in range(col * row)]
