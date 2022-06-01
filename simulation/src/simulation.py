@@ -27,7 +27,7 @@ green = [0, 255, 0]
 pink = [255, 192, 203]
 forest_green = [34, 139, 34]
 
-last_mwt = 0    # last max waiting time
+last_mwt = 0  # last max waiting time
 emergency_activated = False
 rush_hour_activated = False
 
@@ -40,7 +40,26 @@ def on_connect_button(client, userdata, flags, rc):  # The callback for when the
     client.subscribe(f"switch/coordinated", 1)
 
 
-def on_message_button(button_client, userdata, message):
+def on_connect_car(client, userdata, flags, rc):  # The callback for when the client connects to the broker
+    print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
+    print("Simulation connected to Broker")
+
+
+def on_connect_intersection(client, userdata, flags, rc):  # The callback for when the client connects to the broker
+    print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
+    print("Intersection {id} connected to Broker")
+
+
+def on_message_car(message):
+    if message.topic == "x":
+        print("Placeholder")
+
+def on_message_intersection(message):
+    if message.topic == "x":
+        print("Placeholder")
+
+
+def on_message_button(message):
     global emergency_activated
     global rush_hour_activated
     if message.topic == "button/emergency":
@@ -90,15 +109,81 @@ if NTWRK:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
 
     mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
+
     publish_client = mqtt.Client("Sim Publisher")
+    publish_client.connect(host=mqttAddr, port=1883)
+
     button_client = mqtt.Client("Simulation buttons")
     button_client.on_connect = on_connect_button
     button_client.on_message = on_message_button
     button_client.connect(host=mqttAddr, port=1883)
-    publish_client.connect(host=mqttAddr, port=1883)
+
+    car_client = mqtt.Client("Car Client")
+    car_client.on_connect = on_connect_car
+    car_client.on_message = on_message_car
+    car_client.connect(host=mqttAddr, port=1883)
+
+    # for each intersection
+    inter1_client = mqtt.Client("Intersection1 Client")
+    inter1_client.on_connect = on_connect_intersection()
+    inter1_client.on_message = on_message_intersection()
+    inter1_client.connect(host=mqttAddr, port=1883)
+
+    inter2_client = mqtt.Client("Intersection2 Client")
+    inter2_client.on_connect = on_connect_intersection()
+    inter2_client.on_message = on_message_intersection()
+    inter2_client.connect(host=mqttAddr, port=1883)
+
+    inter3_client = mqtt.Client("Intersection3 Client")
+    inter3_client.on_connect = on_connect_intersection()
+    inter3_client.on_message = on_message_intersection()
+    inter3_client.connect(host=mqttAddr, port=1883)
+
+    inter4_client = mqtt.Client("Intersection4 Client")
+    inter4_client.on_connect = on_connect_intersection()
+    inter4_client.on_message = on_message_intersection()
+    inter4_client.connect(host=mqttAddr, port=1883)
+
+    inter5_client = mqtt.Client("Intersection5 Client")
+    inter5_client.on_connect = on_connect_intersection()
+    inter5_client.on_message = on_message_intersection()
+    inter5_client.connect(host=mqttAddr, port=1883)
+
+    inter6_client = mqtt.Client("Intersection6 Client")
+    inter6_client.on_connect = on_connect_intersection()
+    inter6_client.on_message = on_message_intersection()
+    inter6_client.connect(host=mqttAddr, port=1883)
+
+    inter7_client = mqtt.Client("Intersection7 Client")
+    inter7_client.on_connect = on_connect_intersection()
+    inter7_client.on_message = on_message_intersection()
+    inter7_client.connect(host=mqttAddr, port=1883)
+
+    inter8_client = mqtt.Client("Intersection8 Client")
+    inter8_client.on_connect = on_connect_intersection()
+    inter8_client.on_message = on_message_intersection()
+    inter8_client.connect(host=mqttAddr, port=1883)
+
+    inter9_client = mqtt.Client("Intersection9 Client")
+    inter9_client.on_connect = on_connect_intersection()
+    inter9_client.on_message = on_message_intersection()
+    inter9_client.connect(host=mqttAddr, port=1883)
+
     time.sleep(5)
     publish_client.loop_start()
     button_client.loop_start()
+    car_client.loop_start()
+
+    inter1_client.loop_start()
+    inter2_client.loop_start()
+    inter3_client.loop_start()
+    inter4_client.loop_start()
+    inter5_client.loop_start()
+    inter6_client.loop_start()
+    inter7_client.loop_start()
+    inter8_client.loop_start()
+    inter9_client.loop_start()
+
     print("Connected to MQTT broker: " + mqttAddr)
 
 
@@ -290,7 +375,7 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         if NTWRK:
             publish_client.publish(f"simulation/intersection_queues", json_string, qos=2)
             # client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2) # max value of currently driving cars
-            publish_client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)           # all time max value
+            publish_client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)  # all time max value
             publish_client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
 
         print("*****************************")
@@ -335,8 +420,8 @@ if __name__ == "__main__":
     car_thread.daemon = True
     # car_thread.start()
 
-# on message (from dashboard button)
-# activate thread and stop it if button is pressed again
+    # on message (from dashboard button)
+    # activate thread and stop it if button is pressed again
     rush_hour_thread = threading.Thread(name="rush hour generation", target=generator.car_generator_rushhour,
                                         args=(inter_nodes, G, column, row, 5))
     rush_hour_thread.daemon = True
@@ -346,7 +431,7 @@ if __name__ == "__main__":
     emergency_car_thread.daemon = True
 
     rush_hour_thread.start()
-    #emergency_car_thread.start()
+    # emergency_car_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
 
@@ -368,4 +453,3 @@ if __name__ == "__main__":
 
 
 # Rush Hour Path --> init(7) -> (8) -> (5) -> (2)
-
