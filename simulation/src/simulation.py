@@ -13,7 +13,7 @@ import os
 import time
 
 global NTWRK
-NTWRK = True
+NTWRK = False
 
 pygame.init()
 
