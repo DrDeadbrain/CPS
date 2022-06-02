@@ -254,5 +254,12 @@ class World:
                 waiting_time = car.waiting_time
         return waiting_time
 
+    def get_emergency_car_path(self):
+        path = []
+        for car in self.cargroup:
+            if car.emergency:
+                path = car.path
+        return path
+
 
         # TODO: send values via MQTT to dashboard + add max cars per crossing
