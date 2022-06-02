@@ -14,7 +14,7 @@ def emergency_car_generator(intersections: List[Intersection], G: nx.DiGraph, co
 
     num_init_points = len(ini_fi_points)
 
-    inf = random.sample(range(0, num_init_points), 2)
+    inf = [5, 4]
     ini = ini_fi_points[inf[0]]
     fi = ini_fi_points[inf[1]]
     path = nx.shortest_path(G, intersections[ini], intersections[fi])

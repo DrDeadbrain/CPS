@@ -331,8 +331,8 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
             else:
                 location = coordination.get_location(light_crosses, intersections, car, column, row, car_length)
                 if car.emergency:
-                    car_num = font.render(str(num), True, [255, 0, 0])
-                    screen.fill(red, location)
+                    car_num = font.render(str(num), True, blue)
+                    screen.fill(blue, location)
                     screen.blit(car_num, location)
                 else:
                     car_num = font.render(str(num), True, [0, 0, 0])
@@ -424,7 +424,7 @@ if __name__ == "__main__":
 
     car_thread = threading.Thread(name="cargen", target=generator.car_generator, args=(inter_nodes, G, column, row, 5))
     car_thread.daemon = True
-    car_thread.start()
+    # car_thread.start()
 
     # on message (from dashboard button)
     # activate thread and stop it if button is pressed again
@@ -437,7 +437,7 @@ if __name__ == "__main__":
     emergency_car_thread.daemon = True
 
     # rush_hour_thread.start()
-    # emergency_car_thread.start()
+    emergency_car_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
 
