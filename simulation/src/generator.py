@@ -28,7 +28,7 @@ def emergency_car_generator(intersections: List[Intersection], G: nx.DiGraph, co
     else:
         destination = intersections[ini].queue_east
 
-    Car(random.randint(0, max_dist), destination, path, True)
+    Car(random.randint(0, max_dist), destination, path, True, False)
 
 
 def car_generator(intersections: List[Intersection], G: nx.DiGraph, col: int = 2, row: int = -1,
@@ -57,7 +57,7 @@ def car_generator(intersections: List[Intersection], G: nx.DiGraph, col: int = 2
         else:
             destination = intersections[ini].queue_east
 
-        Car(random.randint(0, max_dist), destination, path, False)
+        Car(random.randint(0, max_dist), destination, path, False, False)
         time.sleep(0.75)
 
 
@@ -90,7 +90,7 @@ def car_generator_rushhour(intersections: List[Intersection], G: nx.DiGraph, col
         else:
             destination = intersections[ini].queue_east
 
-        Car(random.randint(0, max_dist), destination, path, False)
+        Car(random.randint(0, max_dist), destination, path, False, True)
         time.sleep(0.75)
 
 

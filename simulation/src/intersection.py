@@ -7,8 +7,10 @@ import pygame
 cargroup = pygame.sprite.Group()
 
 
+# python json to list pythonexamples
+
 class Car(pygame.sprite.Sprite):
-    def __init__(self, init_distance: Union[int, float], init_dest: list, path: list,emergency: bool,  id=0):
+    def __init__(self, init_distance: Union[int, float], init_dest: list, path: list, emergency: bool, rush: bool, id=0):
         """
             Attributes: own time, previous intersection node,
                         current intersection queue, length of the edge it is on
@@ -22,6 +24,7 @@ class Car(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.id = id
         self.emergency = emergency
+        self.rush = rush
         self.waiting_time: Union[int, float] = 0  # waiting time
         self.next_inter: List[Car] = init_dest  # reference to next intersection queue
         self.prev_inter: Optional[object] = None  # reference to prev intersection queue
