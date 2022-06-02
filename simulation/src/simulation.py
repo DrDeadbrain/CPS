@@ -16,7 +16,6 @@ global NTWRK
 NTWRK = True
 COORDINATED = False
 
-
 pygame.init()
 
 white = [255, 255, 255]
@@ -30,8 +29,13 @@ pink = [255, 192, 203]
 forest_green = [34, 139, 34]
 
 last_mwt = 0  # last max waiting time
+global emergency_activated
 emergency_activated = False
+global rush_hour_activated
 rush_hour_activated = False
+global emergency_path_sent
+emergency_path_sent = False
+rushhour_path_sent = False
 
 
 def on_connect_button(client, userdata, flags, rc):  # The callback for when the client connects to the broker
@@ -52,15 +56,30 @@ def on_connect_intersection(client, userdata, flags, rc):  # The callback for wh
     print("Intersection {id} connected to Broker")
 
 
-def on_message_car(client, userdata, message):
-    if message.topic == "x":
-        print("Placeholder")
-
-
 def on_message_intersection(client, userdata, message):
-    if message.topic == "x":
-        print("Placeholder")
-
+    intersection_list = json.loads(message.payload)
+    for i in intersection_list:
+        if i == client.id:
+            previous = intersection_list[i - 1]
+            next = intersection_list[i + 1]
+            if (previous == (i - 3)) or (previous == (i + 3)):
+                if message.topic == f"intersection/{i}/emergency":
+                    client.state_ns = True
+                    client.cycle_time = 10000
+                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
+                if message.topic == f"intersection/{i}/rushhour":
+                    client.state_ns = True
+                    client.cycle_time = 20
+                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
+            if (previous == (i - 1)) or (previous == (i + 1)):
+                if message.topic == f"intersection/{i}/emergency":
+                    client.state_we = True
+                    client.cycle_time = 10000
+                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
+                if message.topic == f"intersection/{i}/rushhour":
+                    client.state_we = True
+                    client.cycle_time = 20
+                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
 
 def on_message_button(client, userdata, message):
     global emergency_activated
@@ -74,6 +93,8 @@ def on_message_button(client, userdata, message):
             emergency_car_thread.start()
         else:
             emergency_activated = False
+            global emergency_path_sent
+            emergency_path_sent = False
             print("*****************************")
             print("EMERGENCY DEACTIVATED")
             print("*****************************")
@@ -88,6 +109,8 @@ def on_message_button(client, userdata, message):
             rush_hour_thread.start()
         else:
             rush_hour_activated = False
+            global rushhour_path_sent
+            rushhour_path_sent = False
             print("*****************************")
             print("RUSH HOUR DEACTIVATED")
             print("*****************************")
@@ -126,7 +149,6 @@ if NTWRK:
 
     car_client = mqtt.Client("Car Client")
     car_client.on_connect = on_connect_car
-    car_client.on_message = on_message_car
     car_client.connect(host=mqttAddr, port=1883)
 
     # for each intersection
@@ -397,11 +419,27 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
                         path.append(i.id)
                     intersection_id = path[0]
                     converted_path = json.dumps(path)
-                    print("#############################################################################")
-                    print(str(intersection_id) + str(converted_path))
-                    publish_client.publish(f"intersection/{intersection_id}/emergency", converted_path, qos=2)
+                    if len(path) > 0:
+                        print("#############################################################################")
+                        print("EMERGENCY" + str(intersection_id) + str(converted_path))
+                    if not emergency_path_sent:
+                        publish_client.publish(f"intersection/{intersection_id}/emergency", converted_path, qos=2)
+                        global emergency_path_sent
+                        emergency_path_sent = True
                 if rush_hour_activated:
-                    # publish_client.publish(f"intersection#/rushhour", emergency_waiting_time, qos=2)
+                    intersection_list = world.get_rushhour_car_path()
+                    path = []
+                    for i in intersection_list:
+                        path.append(i.id)
+                    intersection_id = path[0]
+                    converted_path = json.dumps(path)
+                    if len(path) > 0:
+                        print("#############################################################################")
+                        print("RUSH HOUR" + str(intersection_id) + str(converted_path))
+                    if not rushhour_path_sent:
+                        publish_client.publish(f"intersection/{intersection_id}/rushhour", converted_path, qos=2)
+                        global rushhour_path_sent
+                        rushhour_path_sent = True
                     print("gesdfdsf")
 
         print("*****************************")
@@ -440,11 +478,10 @@ if __name__ == "__main__":
     # generate intersection objects, graph and cars
     inter_nodes = generator.generate_node(col=column, row=row, red_prob=1)
     G = generator.generate_edge(inter_nodes, col=column, row=row)
-    # all_cars = generator.generate_cars(inter_nodes, G, col=column, row=row, num_cars=car_num)
 
     car_thread = threading.Thread(name="cargen", target=generator.car_generator, args=(inter_nodes, G, column, row, 5))
     car_thread.daemon = True
-    # car_thread.start()
+    car_thread.start()
 
     # on message (from dashboard button)
     # activate thread and stop it if button is pressed again
@@ -457,7 +494,7 @@ if __name__ == "__main__":
     emergency_car_thread.daemon = True
 
     # rush_hour_thread.start()
-    emergency_car_thread.start()
+    # emergency_car_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
 

@@ -57,6 +57,7 @@ class Intersection:
         self.time_count = 0
         self.state_ns = state_ns
         self.state_we = state_we
+        # TODO: separate cycle time für die phasen
 
 
 class World:
@@ -264,5 +265,11 @@ class World:
                 path = car.path
         return path
 
+    def get_rushhour_car_path(self):
+        path = []
+        for car in self.cargroup:
+            if car.rush:
+                path = car.path
+        return path
 
         # TODO: send values via MQTT to dashboard + add max cars per crossing
