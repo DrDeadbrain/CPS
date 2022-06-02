@@ -13,7 +13,7 @@ import os
 import time
 
 global NTWRK
-NTWRK = True
+NTWRK = False
 COORDINATED = False
 
 
@@ -444,7 +444,7 @@ if __name__ == "__main__":
 
     car_thread = threading.Thread(name="cargen", target=generator.car_generator, args=(inter_nodes, G, column, row, 5))
     car_thread.daemon = True
-    # car_thread.start()
+    car_thread.start()
 
     # on message (from dashboard button)
     # activate thread and stop it if button is pressed again
@@ -456,7 +456,7 @@ if __name__ == "__main__":
                                             args=(inter_nodes, G, column, row, 5))
     emergency_car_thread.daemon = True
 
-    # rush_hour_thread.start()
+    rush_hour_thread.start()
     emergency_car_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)

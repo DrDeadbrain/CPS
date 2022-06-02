@@ -53,7 +53,7 @@ class Intersection:
                           self.queue_west, self.queue_east]  # all queues
         # pass in progress queue (cars that are currently passing the intersection)
         self.pass_in_prog: Dict[Car, Union[int, float]] = {}
-        self.cycle_time = 10
+        self.cycle_time = 50
         self.time_count = 0
         self.state_ns = state_ns
         self.state_we = state_we
