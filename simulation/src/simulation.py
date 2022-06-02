@@ -13,7 +13,9 @@ import os
 import time
 
 global NTWRK
-NTWRK = False
+NTWRK = True
+COORDINATED = False
+
 
 pygame.init()
 
@@ -50,17 +52,17 @@ def on_connect_intersection(client, userdata, flags, rc):  # The callback for wh
     print("Intersection {id} connected to Broker")
 
 
-def on_message_car(message):
+def on_message_car(client, userdata, message):
     if message.topic == "x":
         print("Placeholder")
 
 
-def on_message_intersection(message):
+def on_message_intersection(client, userdata, message):
     if message.topic == "x":
         print("Placeholder")
 
 
-def on_message_button(message):
+def on_message_button(client, userdata, message):
     global emergency_activated
     global rush_hour_activated
     if message.topic == "button/emergency":
@@ -97,10 +99,13 @@ def on_message_button(message):
             print("*****************************")
             print("SWITCH TO COORDINATED")
             print("*****************************")
+            global COORDINATED
+            COORDINATED = True
         else:
             print("*****************************")
             print("SWITCH TO UNCOORDINATED")
             print("*****************************")
+            COORDINATED = False
 
 
 if NTWRK:
@@ -379,10 +384,25 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         # publishing via MQTT
         if NTWRK:
             publish_client.publish(f"simulation/intersection_queues", json_string, qos=2)
-            # client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2) # max value of currently driving cars
-            publish_client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)  # all time max value
+            publish_client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2) # max value of currently driving cars
+            # publish_client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)  # all time max value
             publish_client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
             publish_client.publish(f"simulation/emergency_waiting_time", emergency_waiting_time, qos=2)
+
+            if COORDINATED:
+                if emergency_activated:
+                    intersection_list = world.get_emergency_car_path()
+                    path = []
+                    for i in intersection_list:
+                        path.append(i.id)
+                    intersection_id = path[0]
+                    converted_path = json.dumps(path)
+                    print("#############################################################################")
+                    print(str(intersection_id) + str(converted_path))
+                    publish_client.publish(f"intersection/{intersection_id}/emergency", converted_path, qos=2)
+                if rush_hour_activated:
+                    # publish_client.publish(f"intersection#/rushhour", emergency_waiting_time, qos=2)
+                    print("gesdfdsf")
 
         print("*****************************")
 
