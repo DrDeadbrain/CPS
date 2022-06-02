@@ -30,11 +30,11 @@
     {
         "id": "3d89a586961cbace",
         "type": "ui_group",
-        "name": "Chart-1",
+        "name": "Waiting Time (Emergency)",
         "tab": "ffb068fa7641e543",
-        "order": 1,
+        "order": 3,
         "disp": true,
-        "width": "6",
+        "width": 11,
         "collapse": false
     },
     {
@@ -44,7 +44,7 @@
         "tab": "ffb068fa7641e543",
         "order": 2,
         "disp": true,
-        "width": "7",
+        "width": 11,
         "collapse": false
     },
     {
@@ -59,7 +59,7 @@
         "id": "4e5f636e.5a6654",
         "type": "ui_base",
         "theme": {
-            "name": "theme-light",
+            "name": "theme-dark",
             "lightTheme": {
                 "default": "#0094CE",
                 "baseColor": "#0094CE",
@@ -71,7 +71,8 @@
                 "default": "#097479",
                 "baseColor": "#097479",
                 "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": false
+                "edited": true,
+                "reset": false
             },
             "customTheme": {
                 "name": "Untitled Theme 1",
@@ -81,44 +82,44 @@
             },
             "themeState": {
                 "base-color": {
-                    "default": "#0094CE",
-                    "value": "#0094CE",
+                    "default": "#097479",
+                    "value": "#097479",
                     "edited": false
                 },
                 "page-titlebar-backgroundColor": {
-                    "value": "#0094CE",
+                    "value": "#097479",
                     "edited": false
                 },
                 "page-backgroundColor": {
-                    "value": "#fafafa",
-                    "edited": false
-                },
-                "page-sidebar-backgroundColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "group-textColor": {
-                    "value": "#1bbfff",
-                    "edited": false
-                },
-                "group-borderColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "group-backgroundColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "widget-textColor": {
                     "value": "#111111",
                     "edited": false
                 },
+                "page-sidebar-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#0eb8c0",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#555555",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#eeeeee",
+                    "edited": false
+                },
                 "widget-backgroundColor": {
-                    "value": "#0094ce",
+                    "value": "#097479",
                     "edited": false
                 },
                 "widget-borderColor": {
-                    "value": "#ffffff",
+                    "value": "#333333",
                     "edited": false
                 },
                 "base-font": {
@@ -154,22 +155,67 @@
     {
         "id": "13758b1e.e29865",
         "type": "ui_group",
-        "name": "Stats",
+        "name": "Queue Length",
         "tab": "ffb068fa7641e543",
-        "order": 3,
+        "order": 5,
         "disp": true,
-        "width": "12",
+        "width": 11,
         "collapse": false
     },
     {
         "id": "6aed43c2.25eb1c",
         "type": "ui_group",
-        "name": "Data",
+        "name": "Waiting Time",
         "tab": "ffb068fa7641e543",
         "order": 4,
         "disp": true,
         "width": "11",
         "collapse": false
+    },
+    {
+        "id": "4301a160.8e8d18",
+        "type": "ui_group",
+        "name": "Group 1",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": 6
+    },
+    {
+        "id": "33c06804.05d8c",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "c188be6a.7f9648",
+        "order": 5,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "265b2238.494d46",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "54f04762.cf06f",
+        "order": 6,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "5fb4693a.500358",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "54f04762.cf06f",
+        "order": 7,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "603ecf59.6be55",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "54f04762.cf06f",
+        "order": 8,
+        "width": 11,
+        "height": 1
     },
     {
         "id": "48b466ee65b6b51a",
@@ -211,8 +257,8 @@
         "z": "2860ad446d60019d",
         "d": true,
         "name": "SingleAvg",
-        "group": "3d89a586961cbace",
-        "order": 0,
+        "group": "4301a160.8e8d18",
+        "order": 1,
         "width": 0,
         "height": 0,
         "label": "single chart",
@@ -273,8 +319,8 @@
         "z": "2860ad446d60019d",
         "d": true,
         "name": "SumAvg",
-        "group": "3d89a586961cbace",
-        "order": 1,
+        "group": "4301a160.8e8d18",
+        "order": 5,
         "width": 0,
         "height": 0,
         "label": "sum chart",
@@ -315,6 +361,7 @@
         "id": "1be721e.9f5ca5e",
         "type": "inject",
         "z": "2860ad446d60019d",
+        "d": true,
         "name": "tickgen/tick:0",
         "props": [
             {
@@ -344,6 +391,7 @@
         "id": "a0bfdc2a.478be8",
         "type": "mqtt in",
         "z": "2860ad446d60019d",
+        "d": true,
         "name": "",
         "topic": "tickgen/tick",
         "qos": "2",
@@ -378,7 +426,7 @@
         "type": "ui_text",
         "z": "2860ad446d60019d",
         "d": true,
-        "group": "54f04762.cf06f",
+        "group": "4301a160.8e8d18",
         "order": 5,
         "width": 0,
         "height": 0,
@@ -417,7 +465,7 @@
         "label": "Simulationsgeschwindigkeit",
         "tooltip": "",
         "group": "54f04762.cf06f",
-        "order": 6,
+        "order": 5,
         "width": 0,
         "height": 0,
         "passthru": true,
@@ -489,8 +537,8 @@
         "z": "2860ad446d60019d",
         "d": true,
         "name": "SingleAvg",
-        "group": "3d89a586961cbace",
-        "order": 0,
+        "group": "4301a160.8e8d18",
+        "order": 4,
         "width": 0,
         "height": 0,
         "label": "single chart",
@@ -742,7 +790,7 @@
         "z": "2860ad446d60019d",
         "name": "Current Queue Length",
         "group": "13758b1e.e29865",
-        "order": 3,
+        "order": 1,
         "width": 0,
         "height": 0,
         "label": "Current Queue Length By Intersection",
@@ -882,8 +930,8 @@
         "z": "2860ad446d60019d",
         "d": true,
         "name": "Queue Length",
-        "group": "6aed43c2.25eb1c",
-        "order": 3,
+        "group": "13758b1e.e29865",
+        "order": 2,
         "width": 0,
         "height": 0,
         "label": "Queue Length By Intersection",
@@ -987,7 +1035,7 @@
         "z": "2860ad446d60019d",
         "name": "Avg. Queue Length",
         "group": "13758b1e.e29865",
-        "order": 4,
+        "order": 3,
         "width": 0,
         "height": 0,
         "label": "Avg. Queue Length",
@@ -1169,5 +1217,94 @@
         "x": 1050,
         "y": 1880,
         "wires": []
+    },
+    {
+        "id": "1fbbbff9.cb9018",
+        "type": "inject",
+        "z": "2860ad446d60019d",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 450,
+        "y": 180,
+        "wires": [
+            [
+                "7a2ccee8.b11ca"
+            ]
+        ]
+    },
+    {
+        "id": "2fd3f148.49ab5e",
+        "type": "mqtt in",
+        "z": "2860ad446d60019d",
+        "name": "Emergency Vehicle Waiting Time",
+        "topic": "simulation/emergency_waiting_time",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "3861079235b4c808",
+        "x": 490,
+        "y": 2620,
+        "wires": [
+            [
+                "53690877.63abe8"
+            ]
+        ]
+    },
+    {
+        "id": "53690877.63abe8",
+        "type": "ui_chart",
+        "z": "2860ad446d60019d",
+        "name": "Emergency Vehicle Waiting Time",
+        "group": "54f04762.cf06f",
+        "order": 9,
+        "width": 0,
+        "height": 0,
+        "label": "Emergency Vehicle Waiting Time",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "x": 1000,
+        "y": 2620,
+        "wires": [
+            []
+        ]
     }
 ]

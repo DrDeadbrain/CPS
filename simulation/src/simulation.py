@@ -13,7 +13,7 @@ import os
 import time
 
 global NTWRK
-NTWRK = False
+NTWRK = True
 
 pygame.init()
 
@@ -54,6 +54,7 @@ def on_message_car(message):
     if message.topic == "x":
         print("Placeholder")
 
+
 def on_message_intersection(message):
     if message.topic == "x":
         print("Placeholder")
@@ -88,7 +89,7 @@ def on_message_button(message):
             print("*****************************")
             print("RUSH HOUR DEACTIVATED")
             print("*****************************")
-            # rush_hour_thread.join()
+            rush_hour_thread.join()
             generator.rush_hour_active = False
     if message.topic == "switch/coordinated":
         converted = message.payload.decode("utf-8")
@@ -125,48 +126,48 @@ if NTWRK:
 
     # for each intersection
     inter1_client = mqtt.Client("Intersection1 Client")
-    inter1_client.on_connect = on_connect_intersection()
-    inter1_client.on_message = on_message_intersection()
+    inter1_client.on_connect = on_connect_intersection
+    inter1_client.on_message = on_message_intersection
     inter1_client.connect(host=mqttAddr, port=1883)
 
     inter2_client = mqtt.Client("Intersection2 Client")
-    inter2_client.on_connect = on_connect_intersection()
-    inter2_client.on_message = on_message_intersection()
+    inter2_client.on_connect = on_connect_intersection
+    inter2_client.on_message = on_message_intersection
     inter2_client.connect(host=mqttAddr, port=1883)
 
     inter3_client = mqtt.Client("Intersection3 Client")
-    inter3_client.on_connect = on_connect_intersection()
-    inter3_client.on_message = on_message_intersection()
+    inter3_client.on_connect = on_connect_intersection
+    inter3_client.on_message = on_message_intersection
     inter3_client.connect(host=mqttAddr, port=1883)
 
     inter4_client = mqtt.Client("Intersection4 Client")
-    inter4_client.on_connect = on_connect_intersection()
-    inter4_client.on_message = on_message_intersection()
+    inter4_client.on_connect = on_connect_intersection
+    inter4_client.on_message = on_message_intersection
     inter4_client.connect(host=mqttAddr, port=1883)
 
     inter5_client = mqtt.Client("Intersection5 Client")
-    inter5_client.on_connect = on_connect_intersection()
-    inter5_client.on_message = on_message_intersection()
+    inter5_client.on_connect = on_connect_intersection
+    inter5_client.on_message = on_message_intersection
     inter5_client.connect(host=mqttAddr, port=1883)
 
     inter6_client = mqtt.Client("Intersection6 Client")
-    inter6_client.on_connect = on_connect_intersection()
-    inter6_client.on_message = on_message_intersection()
+    inter6_client.on_connect = on_connect_intersection
+    inter6_client.on_message = on_message_intersection
     inter6_client.connect(host=mqttAddr, port=1883)
 
     inter7_client = mqtt.Client("Intersection7 Client")
-    inter7_client.on_connect = on_connect_intersection()
-    inter7_client.on_message = on_message_intersection()
+    inter7_client.on_connect = on_connect_intersection
+    inter7_client.on_message = on_message_intersection
     inter7_client.connect(host=mqttAddr, port=1883)
 
     inter8_client = mqtt.Client("Intersection8 Client")
-    inter8_client.on_connect = on_connect_intersection()
-    inter8_client.on_message = on_message_intersection()
+    inter8_client.on_connect = on_connect_intersection
+    inter8_client.on_message = on_message_intersection
     inter8_client.connect(host=mqttAddr, port=1883)
 
     inter9_client = mqtt.Client("Intersection9 Client")
-    inter9_client.on_connect = on_connect_intersection()
-    inter9_client.on_message = on_message_intersection()
+    inter9_client.on_connect = on_connect_intersection
+    inter9_client.on_message = on_message_intersection
     inter9_client.connect(host=mqttAddr, port=1883)
 
     time.sleep(5)
@@ -363,7 +364,7 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
 
         # average waiting time
         avg_waiting_time = world.get_avg_waiting_time()
-        print("Avg. waiting time: {}".format(world.get_avg_waiting_time()))
+        print("Avg. waiting time: {}".format(avg_waiting_time))
 
         # max waiting time
         max_waiting_time = world.get_max_waiting_time()
@@ -371,12 +372,17 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         last_mwt = curr_mwt
         print("Max waiting time: {}".format(curr_mwt))
 
+        # emergency car waiting time
+        emergency_waiting_time = world.get_emergency_waiting_time()
+        print("Emergency waiting time: {}".format(emergency_waiting_time))
+
         # publishing via MQTT
         if NTWRK:
             publish_client.publish(f"simulation/intersection_queues", json_string, qos=2)
             # client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2) # max value of currently driving cars
             publish_client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)  # all time max value
             publish_client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
+            publish_client.publish(f"simulation/emergency_waiting_time", emergency_waiting_time, qos=2)
 
         print("*****************************")
 
@@ -418,7 +424,7 @@ if __name__ == "__main__":
 
     car_thread = threading.Thread(name="cargen", target=generator.car_generator, args=(inter_nodes, G, column, row, 5))
     car_thread.daemon = True
-    # car_thread.start()
+    car_thread.start()
 
     # on message (from dashboard button)
     # activate thread and stop it if button is pressed again
@@ -430,10 +436,11 @@ if __name__ == "__main__":
                                             args=(inter_nodes, G, column, row, 5))
     emergency_car_thread.daemon = True
 
-    rush_hour_thread.start()
+    # rush_hour_thread.start()
     # emergency_car_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
+
 
 # TODO: 1 client for all cars -> rush hour cars get var set. If rush hour car triggers message -> activate green wave on their path for time x
 # TODO: rush hour thread for time x when button is pressed
@@ -453,3 +460,4 @@ if __name__ == "__main__":
 
 
 # Rush Hour Path --> init(7) -> (8) -> (5) -> (2)
+
