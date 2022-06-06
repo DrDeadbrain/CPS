@@ -12,7 +12,6 @@ from typing import *
 import os
 import time
 
-global NTWRK
 NTWRK = True
 COORDINATED = False
 
@@ -29,11 +28,8 @@ pink = [255, 192, 203]
 forest_green = [34, 139, 34]
 
 last_mwt = 0  # last max waiting time
-global emergency_activated
 emergency_activated = False
-global rush_hour_activated
 rush_hour_activated = False
-global emergency_path_sent
 emergency_path_sent = False
 rushhour_path_sent = False
 
@@ -138,7 +134,6 @@ if NTWRK:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
 
     mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
-
     publish_client = mqtt.Client("Sim Publisher")
     publish_client.connect(host=mqttAddr, port=1883)
 
@@ -334,6 +329,8 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
     main method
     entry point
     """
+    global emergency_path_sent
+    global rushhour_path_sent
     global last_mwt
     pygame.init()
     font = pygame.font.SysFont('Arial', 10)
@@ -424,7 +421,6 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
                         print("EMERGENCY" + str(intersection_id) + str(converted_path))
                     if not emergency_path_sent:
                         publish_client.publish(f"intersection/{intersection_id}/emergency", converted_path, qos=2)
-                        global emergency_path_sent
                         emergency_path_sent = True
                 if rush_hour_activated:
                     intersection_list = world.get_rushhour_car_path()
@@ -438,7 +434,6 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
                         print("RUSH HOUR" + str(intersection_id) + str(converted_path))
                     if not rushhour_path_sent:
                         publish_client.publish(f"intersection/{intersection_id}/rushhour", converted_path, qos=2)
-                        global rushhour_path_sent
                         rushhour_path_sent = True
                     print("gesdfdsf")
 

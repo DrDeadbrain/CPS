@@ -25,10 +25,10 @@ services:
     networks:
       - cps
 
-  simulation:
-    build: "./simulation"
-    environment:
-      - MQTT_ADDR=mqttbroker
-    networks:
-      - cps
+#  simulation:
+#    build: "./simulation"
+#    environment:
+#      - MQTT_ADDR=mqttbroker
+#    networks:
+#      - cps
 
