@@ -122,7 +122,6 @@ def on_message_button(client, userdata, message):
         if not rush_hour_activated:
             rush_hour_activated = True
             generator.rush_hour_active = True
-            rushhour_path_sent = False
             rush_hour_thread.start()
             print("**********************************************************")
             print("RUSH HOUR ACTIVATED")
@@ -392,19 +391,11 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         pygame.display.flip()
         world.update_all(0.8)
 
-        # remove_count = 0
-        # while True:
-        #     if car.arrived:
-        #         car.kill()
-
         clock.tick(2)
 
         # Number of cars in queue per intersection
-        # TODO: id werden hier noch generiert - war das Problem nicht behoben?
         queue_dict = {}
-        # id = -1
         for i in intersections:
-            # id += 1
             id = i.id
             queue = 0
             for j in i.queue_all:
@@ -478,13 +469,13 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
                         print(str(i) + " = " + str(client_id) + "LEN: " + str(len(intersection_list)))
                         previous = intersection_list[intersection_list.index(i) - 1]
                         print("PREVIOUS: " + str(previous))
+
                         if intersection_list.index(i) == (len(intersection_list) - 1):
                             next = -1
                         else:
                             next = intersection_list[intersection_list.index(i) + 1]
                         print("NEXT: " + str(next))
-                        # next = intersection_list[intersection_list.index(i) + 1]
-                        # if intersection_list.index(i) < (len(intersection_list) - 1):
+
                         if intersection_list.index(i) == 0:
                             rel_direction = next
                         else:
