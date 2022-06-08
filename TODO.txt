@@ -1,39 +1,9 @@
 TODO:
+- Threads neu starten (emergency & rush hour)
+- Offset Problem
 
-Einsatzfahrzeuge ergänzen
-    -beim generieren der Fahrzeuge mit bestimmter Wahrscheinlichkeit, sttt normalen Auto
-    -extra Klasse ?
-    -Kreuzung muss diese erkennen
+Dashboard:
+- eventmarkierung in den diagrammen
+- emergency vehicle Beschriftung (Fahrtzeit)
 
-Ampelphasen anpassen:
-    -über policy ?
-    -immer ganze Lane?
-    - sonst Ampeln in Gruppen zusammenfassen mit eigenen MQTT Kanälen -> erste Ampel der Gruppe kommuniziert Änderung
-      Phasendauer -> anderen passen an
-      ->entsprechende MQTT Kanäle einrichten
-
-
-TODO: WICHTIGSTER Punkt!
-Kommunikation mit Dashboard:
-    - stats müssen auch Anzahl der Autos an Kreuzungen tracken
-    - Durchsatz pro Kreuzung (Anzahl der Autos innerhalb einer bestimmten Zeitspanne)
-    - Wartezeit pro Kreuzung/Wartende Fahrzeuge pro Kreuzung?
-
-Visualisierung anpassen:
-    - anderes Design für die Ampeln
-    - Farben anpassen für schöneres Gesamtbild der Simulation
-
-
-
-- autos speichern nächstes ziel
-- dieses bei ankunft an kreuzung dieser mitteilen
---> die kreuzung kann dann bei häufung die entsprechend nächsten kreuzungen vorwarnen
-
-- queue diagramm als liniendiagramm für verlauf
-- statemachine für ampeln (statt update policy)
-- ggf docker verwerfen
-- rettungseinsatz (-knopf)
-- rushhour knopf
-- anzahl autos per schieberegler
-
-- dokumententation für 3. Praktikum
+- code aufräumen
