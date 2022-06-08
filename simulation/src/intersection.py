@@ -4,6 +4,9 @@ import numpy as np
 from typing import *
 import pygame
 
+emergency_activated = False
+rush_hour_activated = False
+
 cargroup = pygame.sprite.Group()
 
 
@@ -45,7 +48,7 @@ class Intersection:
             @param state_ns: A boolean which determine if it is green light for the north-south direction
             @param state_we: A boolean which determine if it is green light for the west-east direction
         """
-        self.id = id + 1
+        self.id = id
         self.queue_north: List[Car] = []  # queue on the north side
         self.queue_south: List[Car] = []  # queue on the south side
         self.queue_east: List[Car] = []  # queue on the east side
@@ -55,8 +58,10 @@ class Intersection:
         # pass in progress queue (cars that are currently passing the intersection)
         self.pass_in_prog: Dict[Car, Union[int, float]] = {}
         self.cycle_time = 50
-        self.green_time_ns = 30
-        self.green_time_we = 5
+        self.green_time_ns_ref = 15
+        self.green_time_ns_count = 15
+        self.green_time_we_ref = 15
+        self.green_time_we_count = 15
         self.time_count = 0
         self.state_ns = state_ns
         self.state_we = state_we
@@ -212,19 +217,23 @@ class World:
     def update_traffic_light(self):
         for inter in self.all_intersections:
             if inter.state_ns is True and inter.state_we is False:
-                if inter.green_time_ns == 0:
+                if inter.green_time_ns_count == 0:
                     inter.state_ns = False
                     inter.state_we = True
-                    inter.green_time_ns = 15
+                    # RESET GREEN TIME
+                    inter.green_time_ns_count = inter.green_time_ns_ref
                 else:
-                    inter.green_time_ns -= 1
+                    inter.green_time_ns_count -= 1
+                print("NS #################################################" + str(inter.green_time_ns_count))
             elif inter.state_ns is False and inter.state_we is True:
-                if inter.green_time_we == 0:
+                if inter.green_time_we_count == 0:
                     inter.state_we = False
                     inter.state_ns = True
-                    inter.green_time_we = 15
+                    # RESET GREEN TIME
+                    inter.green_time_we_count = inter.green_time_we_ref
                 else:
-                    inter.green_time_we -= 1
+                    inter.green_time_we_count -= 1
+                print("WE #################################################" + str(inter.green_time_we_count))
 
             # if inter.time_count == inter.cycle_time:
             #     inter.state_we = not inter.state_we

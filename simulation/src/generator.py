@@ -76,19 +76,21 @@ def car_generator_rushhour(intersections: List[Intersection], G: nx.DiGraph, col
     num_init_points = len(ini_fi_points)
 
     while rush_hour_active:
-        inf = [1, 7]
-        ini = ini_fi_points[inf[0]]
-        fi = ini_fi_points[inf[1]]
-        path = nx.shortest_path(G, intersections[ini], intersections[fi])
+        inf = [0, 8]
+        # ini = ini_fi_points[inf[0]]
+        # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + str(ini_fi_points))
+        # fi = ini_fi_points[inf[1]]
+        path = nx.shortest_path(G, intersections[inf[0]], intersections[inf[1]])
 
-        if ini < col:
-            destination = intersections[ini].queue_north
-        elif col * (row - 1) <= ini < col * row:
-            destination = intersections[ini].queue_south
-        elif ini in [i * col for i in range(1, row - 1)]:
-            destination = intersections[ini].queue_west
-        else:
-            destination = intersections[ini].queue_east
+        # if ini < col:
+        #     destination = intersections[ini].queue_north
+        # elif col * (row - 1) <= ini < col * row:
+        #     destination = intersections[ini].queue_south
+        # elif ini in [i * col for i in range(1, row - 1)]:
+        #     destination = intersections[ini].queue_west
+        # else:
+        #     destination = intersections[ini].queue_east
+        destination = intersections[inf[0]].queue_west
 
         Car(random.randint(0, max_dist), destination, path, False, True)
         time.sleep(0.75)

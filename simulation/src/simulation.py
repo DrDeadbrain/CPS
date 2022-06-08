@@ -6,15 +6,14 @@ import paho.mqtt.client as mqtt
 
 import coordination
 import generator
-from intersection import nx, World, Intersection, Car, cargroup
+from intersection import nx, World, Intersection, Car, cargroup, emergency_activated, rush_hour_activated
 from typing import *
 
 import os
 import time
 
 global NTWRK
-NTWRK = False
-COORDINATED = False
+NTWRK = True
 
 pygame.init()
 
@@ -29,11 +28,10 @@ pink = [255, 192, 203]
 forest_green = [34, 139, 34]
 
 last_mwt = 0  # last max waiting time
-emergency_activated = False
-rush_hour_activated = False
 emergency_path_sent = False
 rushhour_path_sent = False
 intersection_message = False
+coordinated = False
 temp_message = -1
 temp_client = -1
 
@@ -59,11 +57,6 @@ def get_intersection_id(client):
     if client == inter8_client:
         id = 8
     return id
-
-
-# def set_intersection():
-#     global temp_client
-#     global temp_message
 
 
 def on_connect_button(client, userdata, flags, rc):  # The callback for when the client connects to the broker
@@ -357,6 +350,8 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
     global rushhour_path_sent
     global last_mwt
     global intersection_message
+    global emergency_activated
+    global rush_hour_activated
 
     pygame.init()
     font = pygame.font.SysFont('Arial', 10)
@@ -456,6 +451,7 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
                         if not rushhour_path_sent:
                             publish_client.publish(f"intersection/{intersection_id}/rushhour", converted_path, qos=2)
                             rushhour_path_sent = True
+                            print("RUSH HOUR PATH SENT ++++++++++++++++++++++++++++++++++")
 
             if intersection_message:
 
@@ -487,33 +483,34 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
                             if temp_message.topic == f"intersection/{i}/emergency":
                                 curr_intersection.state_we = False
                                 curr_intersection.state_ns = True
-                                curr_intersection.cycle_time = 10000
+                                curr_intersection.green_time_ns_ref = 50
+                                curr_intersection.green_time_ns_count = 50
                                 temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
                             if temp_message.topic == f"intersection/{i}/rushhour":
                                 curr_intersection.state_we = False
                                 curr_intersection.state_ns = True
-                                curr_intersection.cycle_time = 20
-                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                                curr_intersection.green_time_ns_ref = 50
+                                curr_intersection.green_time_ns_count = 50
+                                temp_client.publish(f"intersection/{next}/rushhour", temp_message.payload, qos=2)
                         if (rel_direction == (i - 1)) or (rel_direction == (i + 1)):
                             print("MESSAGE TOPIC: " + str(temp_message.topic))
                             if temp_message.topic == f"intersection/{i}/emergency":
                                 curr_intersection.state_ns = False
                                 curr_intersection.state_we = True
-                                curr_intersection.cycle_time = 10000
+                                curr_intersection.green_time_we_ref = 50
+                                curr_intersection.green_time_we_count = 50
                                 temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
                             if temp_message.topic == f"intersection/{i}/rushhour":
                                 print("ENTERED THE RIGHT PATH because: " + str(
                                     temp_message.topic) + " = " + f"intersection/{i}/rushhour")
                                 curr_intersection.state_ns = False
                                 curr_intersection.state_we = True
-                                curr_intersection.cycle_time = 20
-                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                                curr_intersection.green_time_we_ref = 50
+                                curr_intersection.green_time_we_count = 50
+                                temp_client.publish(f"intersection/{next}/rushhour", temp_message.payload, qos=2)
                 intersection_message = False
 
-                # RESET CYCLE TIME
-                if not emergency_activated and not rush_hour_activated:
-                    for i in world.all_intersections:
-                        i.cycle_time = 10
+
         print("*****************************")
 
     print("Simulation done")
@@ -565,8 +562,8 @@ if __name__ == "__main__":
                                             args=(inter_nodes, G, column, row, 5))
     emergency_car_thread.daemon = True
 
-    rush_hour_thread.start()
-    emergency_car_thread.start()
+    # rush_hour_thread.start()
+    # emergency_car_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
 
@@ -577,13 +574,13 @@ if __name__ == "__main__":
 # TODO: --> on message switch state to let rush hour cars pass
 
 # ----------------------------- Intersection Setup -----------------------------
-# -----   ------------ 6 -------------- 7 --------------- 8   ------------------
+# -----   ------------ 0 -------------- 1 --------------- 2   ------------------
 # -----                |                |                 |                 ----
 # -----                |                |                 |                 ----
 # -----   ------------ 3 -------------- 4 --------------- 5   ------------------
 # -----                |                |                 |                 ----
 # -----                |                |                 |                 ----
-# -----   ------------ 0 -------------- 1 --------------- 2   ------------------
+# -----   ------------ 6 -------------- 7 --------------- 8   ------------------
 # ------------------------------------------------------------------------------
 
 
