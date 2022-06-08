@@ -16,6 +16,7 @@ global NTWRK
 NTWRK = False
 COORDINATED = False
 
+
 pygame.init()
 
 white = [255, 255, 255]
@@ -29,116 +30,134 @@ pink = [255, 192, 203]
 forest_green = [34, 139, 34]
 
 last_mwt = 0  # last max waiting time
-global emergency_activated
 emergency_activated = False
-global rush_hour_activated
 rush_hour_activated = False
-global emergency_path_sent
 emergency_path_sent = False
 rushhour_path_sent = False
+intersection_message = False
+temp_message = -1
+temp_client = -1
+
+
+def get_intersection_id(client):
+    id = -1
+    if client == inter0_client:
+        id = 0
+    if client == inter1_client:
+        id = 1
+    if client == inter2_client:
+        id = 2
+    if client == inter3_client:
+        id = 3
+    if client == inter4_client:
+        id = 4
+    if client == inter5_client:
+        id = 5
+    if client == inter6_client:
+        id = 6
+    if client == inter7_client:
+        id = 7
+    if client == inter8_client:
+        id = 8
+    return id
+
+
+# def set_intersection():
+#     global temp_client
+#     global temp_message
 
 
 def on_connect_button(client, userdata, flags, rc):  # The callback for when the client connects to the broker
-    print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
-    print("Simulation connected to Broker")
+    print(f"Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
+    print("Simulation connected to broker and subscribed for buttons.")
     client.subscribe(f"button/emergency", 1)
     client.subscribe(f"button/rush_hour", 1)
     client.subscribe(f"switch/coordinated", 1)
 
 
 def on_connect_car(client, userdata, flags, rc):  # The callback for when the client connects to the broker
-    print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
-    print("Simulation connected to Broker")
+    print(f"Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
+    print("Simulation connected to broker for car messages.")
 
 
 def on_connect_intersection(client, userdata, flags, rc):  # The callback for when the client connects to the broker
-    print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
-    print("Intersection {id} connected to Broker")
+    print(f"Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
+
+    id = get_intersection_id(client)
+
+    print(f"Intersection {id} connected to Broker.")
+    client.subscribe(f"intersection/{id}/emergency", 1)
+    client.subscribe(f"intersection/{id}/rushhour", 1)
+    print(f"Intersection {id} subscribed for emergency and rushhour messages.")
 
 
 def on_message_intersection(client, userdata, message):
-    intersection_list = json.loads(message.payload)
-    for i in intersection_list:
-        if i == client.id:
-            previous = intersection_list[i - 1]
-            next = intersection_list[i + 1]
-            if (previous == (i - 3)) or (previous == (i + 3)):
-                if message.topic == f"intersection/{i}/emergency":
-                    client.state_ns = True
-                    client.cycle_time = 10000
-                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
-                if message.topic == f"intersection/{i}/rushhour":
-                    client.state_ns = True
-                    client.cycle_time = 20
-                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
-            if (previous == (i - 1)) or (previous == (i + 1)):
-                if message.topic == f"intersection/{i}/emergency":
-                    client.state_we = True
-                    client.cycle_time = 10000
-                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
-                if message.topic == f"intersection/{i}/rushhour":
-                    client.state_we = True
-                    client.cycle_time = 20
-                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
+    global temp_client
+    global temp_message
+    global intersection_message
+    temp_message = message
+    temp_client = client
+    intersection_message = True
+
 
 def on_message_button(client, userdata, message):
     global emergency_activated
     global rush_hour_activated
+    global emergency_path_sent
+    global rushhour_path_sent
+    global coordinated
     if message.topic == "button/emergency":
         if not emergency_activated:
             emergency_activated = True
-            print("*****************************")
-            print("EMERGENCY ACTIVATED")
-            print("*****************************")
             emergency_car_thread.start()
+            print("**********************************************************")
+            print("EMERGENCY ACTIVATED")
+            print("**********************************************************")
         else:
             emergency_activated = False
-            global emergency_path_sent
             emergency_path_sent = False
-            print("*****************************")
-            print("EMERGENCY DEACTIVATED")
-            print("*****************************")
             emergency_car_thread.join()
+            print("**********************************************************")
+            print("EMERGENCY DEACTIVATED")
+            print("**********************************************************")
     if message.topic == "button/rush_hour":
         if not rush_hour_activated:
             rush_hour_activated = True
-            print("*****************************")
-            print("RUSH HOUR ACTIVATED")
-            print("*****************************")
             generator.rush_hour_active = True
+            rushhour_path_sent = False
             rush_hour_thread.start()
+            print("**********************************************************")
+            print("RUSH HOUR ACTIVATED")
+            print("**********************************************************")
         else:
             rush_hour_activated = False
-            global rushhour_path_sent
             rushhour_path_sent = False
-            print("*****************************")
-            print("RUSH HOUR DEACTIVATED")
-            print("*****************************")
-            rush_hour_thread.join()
             generator.rush_hour_active = False
+            rush_hour_thread.join()
+            print("**********************************************************")
+            print("RUSH HOUR DEACTIVATED")
+            print("**********************************************************")
     if message.topic == "switch/coordinated":
         converted = message.payload.decode("utf-8")
         if converted == "true":
-            print("*****************************")
+            coordinated = True
+            print("**********************************************************")
             print("SWITCH TO COORDINATED")
-            print("*****************************")
-            global COORDINATED
-            COORDINATED = True
+            print("**********************************************************")
         else:
-            print("*****************************")
+            coordinated = False
+            print("**********************************************************")
             print("SWITCH TO UNCOORDINATED")
-            print("*****************************")
-            COORDINATED = False
+            print("**********************************************************")
 
 
 if NTWRK:
-    try:
-        os.environ["DISPLAY"]
-    except:
-        os.environ["SDL_VIDEODRIVER"] = "dummy"
+    # try:
+    #     os.environ["DISPLAY"]
+    # except:
+    #     os.environ["SDL_VIDEODRIVER"] = "dummy"
 
     mqttAddr = os.getenv('MQTT_ADDR', 'localhost')
-
     publish_client = mqtt.Client("Sim Publisher")
     publish_client.connect(host=mqttAddr, port=1883)
 
@@ -152,6 +171,11 @@ if NTWRK:
     car_client.connect(host=mqttAddr, port=1883)
 
     # for each intersection
+    inter0_client = mqtt.Client("Intersection0 Client")
+    inter0_client.on_connect = on_connect_intersection
+    inter0_client.on_message = on_message_intersection
+    inter0_client.connect(host=mqttAddr, port=1883)
+
     inter1_client = mqtt.Client("Intersection1 Client")
     inter1_client.on_connect = on_connect_intersection
     inter1_client.on_message = on_message_intersection
@@ -192,16 +216,12 @@ if NTWRK:
     inter8_client.on_message = on_message_intersection
     inter8_client.connect(host=mqttAddr, port=1883)
 
-    inter9_client = mqtt.Client("Intersection9 Client")
-    inter9_client.on_connect = on_connect_intersection
-    inter9_client.on_message = on_message_intersection
-    inter9_client.connect(host=mqttAddr, port=1883)
-
     time.sleep(5)
     publish_client.loop_start()
     button_client.loop_start()
     car_client.loop_start()
 
+    inter0_client.loop_start()
     inter1_client.loop_start()
     inter2_client.loop_start()
     inter3_client.loop_start()
@@ -210,9 +230,10 @@ if NTWRK:
     inter6_client.loop_start()
     inter7_client.loop_start()
     inter8_client.loop_start()
-    inter9_client.loop_start()
 
-    print("Connected to MQTT broker: " + mqttAddr)
+    print("**********************************************************")
+    print("Clients connected to MQTT broker: " + mqttAddr)
+    print("**********************************************************")
 
 
 def create_intersection_crosses(row: int, column: int, cr_width: int, cr_height: int,
@@ -334,7 +355,11 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
     main method
     entry point
     """
+    global emergency_path_sent
+    global rushhour_path_sent
     global last_mwt
+    global intersection_message
+
     pygame.init()
     font = pygame.font.SysFont('Arial', 10)
     clock = pygame.time.Clock()
@@ -377,10 +402,12 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         clock.tick(2)
 
         # Number of cars in queue per intersection
+        # TODO: id werden hier noch generiert - war das Problem nicht behoben?
         queue_dict = {}
-        id = -1
+        # id = -1
         for i in intersections:
-            id += 1
+            # id += 1
+            id = i.id
             queue = 0
             for j in i.queue_all:
                 queue += len(j)
@@ -411,37 +438,91 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
             publish_client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
             publish_client.publish(f"simulation/emergency_waiting_time", emergency_waiting_time, qos=2)
 
-            if COORDINATED:
+            if coordinated:
                 if emergency_activated:
                     intersection_list = world.get_emergency_car_path()
                     path = []
                     for i in intersection_list:
                         path.append(i.id)
-                    intersection_id = path[0]
-                    converted_path = json.dumps(path)
                     if len(path) > 0:
+                        intersection_id = path[0]
+                        converted_path = json.dumps(path)
                         print("#############################################################################")
                         print("EMERGENCY" + str(intersection_id) + str(converted_path))
-                    if not emergency_path_sent:
-                        publish_client.publish(f"intersection/{intersection_id}/emergency", converted_path, qos=2)
-                        global emergency_path_sent
-                        emergency_path_sent = True
+                        if not emergency_path_sent:
+                            publish_client.publish(f"intersection/{intersection_id}/emergency", converted_path, qos=2)
+                            emergency_path_sent = True
                 if rush_hour_activated:
                     intersection_list = world.get_rushhour_car_path()
                     path = []
                     for i in intersection_list:
                         path.append(i.id)
-                    intersection_id = path[0]
-                    converted_path = json.dumps(path)
                     if len(path) > 0:
+                        intersection_id = path[0]
+                        converted_path = json.dumps(path)
                         print("#############################################################################")
-                        print("RUSH HOUR" + str(intersection_id) + str(converted_path))
-                    if not rushhour_path_sent:
-                        publish_client.publish(f"intersection/{intersection_id}/rushhour", converted_path, qos=2)
-                        global rushhour_path_sent
-                        rushhour_path_sent = True
-                    print("gesdfdsf")
+                        print("RUSH HOUR " + str(intersection_id) + str(converted_path))
+                        if not rushhour_path_sent:
+                            publish_client.publish(f"intersection/{intersection_id}/rushhour", converted_path, qos=2)
+                            rushhour_path_sent = True
 
+            if intersection_message:
+
+                intersection_list = json.loads(temp_message.payload)
+                client_id = get_intersection_id(temp_client)
+
+                for i in intersection_list:
+                    curr_intersection = world.get_curr_intersection(i)
+
+                    if i == client_id:
+                        print(
+                            "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                        print(str(i) + " = " + str(client_id) + "LEN: " + str(len(intersection_list)))
+                        previous = intersection_list[intersection_list.index(i) - 1]
+                        print("PREVIOUS: " + str(previous))
+                        if intersection_list.index(i) == (len(intersection_list) - 1):
+                            next = -1
+                        else:
+                            next = intersection_list[intersection_list.index(i) + 1]
+                        print("NEXT: " + str(next))
+                        # next = intersection_list[intersection_list.index(i) + 1]
+                        # if intersection_list.index(i) < (len(intersection_list) - 1):
+                        if intersection_list.index(i) == 0:
+                            rel_direction = next
+                        else:
+                            rel_direction = previous
+                        print(str(i) + " RELATIVE DIRECTION" + str(rel_direction))
+                        if (rel_direction == (i - 3)) or (rel_direction == (i + 3)):
+                            if temp_message.topic == f"intersection/{i}/emergency":
+                                curr_intersection.state_we = False
+                                curr_intersection.state_ns = True
+                                curr_intersection.cycle_time = 10000
+                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                            if temp_message.topic == f"intersection/{i}/rushhour":
+                                curr_intersection.state_we = False
+                                curr_intersection.state_ns = True
+                                curr_intersection.cycle_time = 20
+                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                        if (rel_direction == (i - 1)) or (rel_direction == (i + 1)):
+                            print("MESSAGE TOPIC: " + str(temp_message.topic))
+                            if temp_message.topic == f"intersection/{i}/emergency":
+                                curr_intersection.state_ns = False
+                                curr_intersection.state_we = True
+                                curr_intersection.cycle_time = 10000
+                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                            if temp_message.topic == f"intersection/{i}/rushhour":
+                                print("ENTERED THE RIGHT PATH because: " + str(
+                                    temp_message.topic) + " = " + f"intersection/{i}/rushhour")
+                                curr_intersection.state_ns = False
+                                curr_intersection.state_we = True
+                                curr_intersection.cycle_time = 20
+                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                intersection_message = False
+
+                # RESET CYCLE TIME
+                if not emergency_activated and not rush_hour_activated:
+                    for i in world.all_intersections:
+                        i.cycle_time = 10
         print("*****************************")
 
     print("Simulation done")
@@ -493,13 +574,9 @@ if __name__ == "__main__":
                                             args=(inter_nodes, G, column, row, 5))
     emergency_car_thread.daemon = True
 
-<<<<<<< HEAD
+
     rush_hour_thread.start()
     emergency_car_thread.start()
-=======
-    # rush_hour_thread.start()
-    # emergency_car_thread.start()
->>>>>>> 3caaba2cce11a631b00e0dbc06b502d98fcb553c
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
 

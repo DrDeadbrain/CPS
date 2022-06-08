@@ -272,4 +272,11 @@ class World:
                 path = car.path
         return path
 
+    def get_curr_intersection(self, id):
+        curr_intersection = -1
+        for i in self.all_intersections:
+           if i.id == id:
+               curr_intersection = i
+        return curr_intersection
+
         # TODO: send values via MQTT to dashboard + add max cars per crossing
