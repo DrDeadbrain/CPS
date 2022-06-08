@@ -10,7 +10,8 @@ cargroup = pygame.sprite.Group()
 # python json to list pythonexamples
 
 class Car(pygame.sprite.Sprite):
-    def __init__(self, init_distance: Union[int, float], init_dest: list, path: list, emergency: bool, rush: bool, id=0):
+    def __init__(self, init_distance: Union[int, float], init_dest: list, path: list, emergency: bool, rush: bool,
+                 id=0):
         """
             Attributes: own time, previous intersection node,
                         current intersection queue, length of the edge it is on
@@ -53,7 +54,9 @@ class Intersection:
                           self.queue_west, self.queue_east]  # all queues
         # pass in progress queue (cars that are currently passing the intersection)
         self.pass_in_prog: Dict[Car, Union[int, float]] = {}
-        self.cycle_time = 10
+        self.cycle_time = 50
+        self.green_time_ns = 30
+        self.green_time_we = 5
         self.time_count = 0
         self.state_ns = state_ns
         self.state_we = state_we
@@ -208,12 +211,27 @@ class World:
 
     def update_traffic_light(self):
         for inter in self.all_intersections:
-            if inter.time_count == inter.cycle_time:
-                inter.state_we = not inter.state_we
-                inter.state_ns = not inter.state_ns
-                inter.time_count = 0
-            else:
-                inter.time_count += 1
+            if inter.state_ns is True and inter.state_we is False:
+                if inter.green_time_ns == 0:
+                    inter.state_ns = False
+                    inter.state_we = True
+                    inter.green_time_ns = 15
+                else:
+                    inter.green_time_ns -= 1
+            elif inter.state_ns is False and inter.state_we is True:
+                if inter.green_time_we == 0:
+                    inter.state_we = False
+                    inter.state_ns = True
+                    inter.green_time_we = 15
+                else:
+                    inter.green_time_we -= 1
+
+            # if inter.time_count == inter.cycle_time:
+            #     inter.state_we = not inter.state_we
+            #     inter.state_ns = not inter.state_ns
+            #     inter.time_count = 0
+            # else:
+            #     inter.time_count += 1
 
     def update_all(self, time: Union[int, float]) -> bool:
         all_arrived = self.update_cars(time)
@@ -275,8 +293,8 @@ class World:
     def get_curr_intersection(self, id):
         curr_intersection = -1
         for i in self.all_intersections:
-           if i.id == id:
-               curr_intersection = i
+            if i.id == id:
+                curr_intersection = i
         return curr_intersection
 
         # TODO: send values via MQTT to dashboard + add max cars per crossing
