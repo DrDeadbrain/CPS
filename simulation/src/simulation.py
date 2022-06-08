@@ -16,7 +16,6 @@ global NTWRK
 NTWRK = False
 COORDINATED = False
 
-
 pygame.init()
 
 white = [255, 255, 255]
@@ -433,7 +432,8 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         # publishing via MQTT
         if NTWRK:
             publish_client.publish(f"simulation/intersection_queues", json_string, qos=2)
-            publish_client.publish(f"simulation/max_waiting_time", max_waiting_time, qos=2) # max value of currently driving cars
+            publish_client.publish(f"simulation/max_waiting_time", max_waiting_time,
+                                   qos=2)  # max value of currently driving cars
             # publish_client.publish(f"simulation/max_waiting_time", curr_mwt, qos=2)  # all time max value
             publish_client.publish(f"simulation/avg_waiting_time", avg_waiting_time, qos=2)
             publish_client.publish(f"simulation/emergency_waiting_time", emergency_waiting_time, qos=2)
@@ -574,12 +574,10 @@ if __name__ == "__main__":
                                             args=(inter_nodes, G, column, row, 5))
     emergency_car_thread.daemon = True
 
-
     rush_hour_thread.start()
     emergency_car_thread.start()
 
     main(screen, column, row, G, inter_nodes, intersections, streets, light_offset)
-
 
 # TODO: 1 client for all cars -> rush hour cars get var set. If rush hour car triggers message -> activate green wave on their path for time x
 # TODO: rush hour thread for time x when button is pressed
@@ -599,4 +597,3 @@ if __name__ == "__main__":
 
 
 # Rush Hour Path --> init(7) -> (8) -> (5) -> (2)
-
