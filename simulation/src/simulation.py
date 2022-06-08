@@ -32,6 +32,9 @@ emergency_activated = False
 rush_hour_activated = False
 emergency_path_sent = False
 rushhour_path_sent = False
+intersection_message = False
+temp_message = -1
+temp_client = -1
 
 
 def get_intersection_id(client):
@@ -55,6 +58,12 @@ def get_intersection_id(client):
     if client == inter8_client:
         id = 8
     return id
+
+
+# def set_intersection():
+#     global temp_client
+#     global temp_message
+
 
 def on_connect_button(client, userdata, flags, rc):  # The callback for when the client connects to the broker
     print(f"Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
@@ -81,41 +90,13 @@ def on_connect_intersection(client, userdata, flags, rc):  # The callback for wh
 
 
 def on_message_intersection(client, userdata, message):
-    intersection_list = json.loads(message.payload)
-    client_id = get_intersection_id(client)
-    for i in intersection_list:
-        if i == client_id:
-            print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-            print(str(i) + " = " + str(client_id) + "LEN: " + str(len(intersection_list)))
-            previous = intersection_list[intersection_list.index(i) - 1]
-            print("PREVIOUS: " + str(previous))
-            next = intersection_list[intersection_list.index(i) + 1]
-            print("NEXT: " + str(next))
-            if intersection_list.index(i) < (len(intersection_list)-1):
-                rel_direction = next
-            else:
-                rel_direction = previous
-            print(str(i) + " RELATIVE DIRECTION" + str(rel_direction))
-            if (rel_direction == (i - 3)) or (rel_direction == (i + 3)):
-                if message.topic == f"intersection/{i}/emergency":
-                    client.state_ns = True
-                    client.cycle_time = 10000
-                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
-                if message.topic == f"intersection/{i}/rushhour":
-                    client.state_ns = True
-                    client.cycle_time = 20
-                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
-            if (rel_direction == (i - 1)) or (rel_direction == (i + 1)):
-                print("MESSAGE TOPIC: " + str(message.topic))
-                if message.topic == f"intersection/{i}/emergency":
-                    client.state_we = True
-                    client.cycle_time = 10000
-                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
-                if message.topic == f"intersection/{i}/rushhour":
-                    print("ENTERED THE RIGHT PATH because: " + str(message.topic) + " = " + f"intersection/{i}/rushhour")
-                    client.state_we = True
-                    client.cycle_time = 20
-                    client.publish(f"intersection/{next}/emergency", message.payload, qos=2)
+    global temp_client
+    global temp_message
+    global intersection_message
+    temp_message = message
+    temp_client = client
+    intersection_message = True
+
 
 def on_message_button(client, userdata, message):
     global emergency_activated
@@ -375,6 +356,8 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
     global emergency_path_sent
     global rushhour_path_sent
     global last_mwt
+    global intersection_message
+
     pygame.init()
     font = pygame.font.SysFont('Arial', 10)
     clock = pygame.time.Clock()
@@ -417,10 +400,12 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
         clock.tick(2)
 
         # Number of cars in queue per intersection
+        # TODO: id werden hier noch generiert - war das Problem nicht behoben?
         queue_dict = {}
-        id = -1
+        # id = -1
         for i in intersections:
-            id += 1
+            # id += 1
+            id = i.id
             queue = 0
             for j in i.queue_all:
                 queue += len(j)
@@ -457,29 +442,85 @@ def main(screen: pygame.Surface, column: int, row: int, G: nx.DiGraph, intersect
                     path = []
                     for i in intersection_list:
                         path.append(i.id)
-                    intersection_id = path[0]
-                    converted_path = json.dumps(path)
                     if len(path) > 0:
+                        intersection_id = path[0]
+                        converted_path = json.dumps(path)
                         print("#############################################################################")
                         print("EMERGENCY" + str(intersection_id) + str(converted_path))
-                    if not emergency_path_sent:
-                        publish_client.publish(f"intersection/{intersection_id}/emergency", converted_path, qos=2)
-                        emergency_path_sent = True
+                        if not emergency_path_sent:
+                            publish_client.publish(f"intersection/{intersection_id}/emergency", converted_path, qos=2)
+                            emergency_path_sent = True
                 if rush_hour_activated:
                     intersection_list = world.get_rushhour_car_path()
                     path = []
                     for i in intersection_list:
                         path.append(i.id)
-                    intersection_id = path[0]
-                    converted_path = json.dumps(path)
                     if len(path) > 0:
+                        intersection_id = path[0]
+                        converted_path = json.dumps(path)
                         print("#############################################################################")
                         print("RUSH HOUR " + str(intersection_id) + str(converted_path))
-                    if not rushhour_path_sent:
-                        publish_client.publish(f"intersection/{intersection_id}/rushhour", converted_path, qos=2)
-                        rushhour_path_sent = True
-                    print("gesdfdsf")
+                        if not rushhour_path_sent:
+                            publish_client.publish(f"intersection/{intersection_id}/rushhour", converted_path, qos=2)
+                            rushhour_path_sent = True
 
+            if intersection_message:
+
+                intersection_list = json.loads(temp_message.payload)
+                client_id = get_intersection_id(temp_client)
+
+                for i in intersection_list:
+                    curr_intersection = world.get_curr_intersection(i)
+
+                    if i == client_id:
+                        print(
+                            "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                        print(str(i) + " = " + str(client_id) + "LEN: " + str(len(intersection_list)))
+                        previous = intersection_list[intersection_list.index(i) - 1]
+                        print("PREVIOUS: " + str(previous))
+                        if intersection_list.index(i) == (len(intersection_list) - 1):
+                            next = -1
+                        else:
+                            next = intersection_list[intersection_list.index(i) + 1]
+                        print("NEXT: " + str(next))
+                        # next = intersection_list[intersection_list.index(i) + 1]
+                        # if intersection_list.index(i) < (len(intersection_list) - 1):
+                        if intersection_list.index(i) == 0:
+                            rel_direction = next
+                        else:
+                            rel_direction = previous
+                        print(str(i) + " RELATIVE DIRECTION" + str(rel_direction))
+                        if (rel_direction == (i - 3)) or (rel_direction == (i + 3)):
+                            if temp_message.topic == f"intersection/{i}/emergency":
+                                curr_intersection.state_we = False
+                                curr_intersection.state_ns = True
+                                curr_intersection.cycle_time = 10000
+                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                            if temp_message.topic == f"intersection/{i}/rushhour":
+                                curr_intersection.state_we = False
+                                curr_intersection.state_ns = True
+                                curr_intersection.cycle_time = 20
+                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                        if (rel_direction == (i - 1)) or (rel_direction == (i + 1)):
+                            print("MESSAGE TOPIC: " + str(temp_message.topic))
+                            if temp_message.topic == f"intersection/{i}/emergency":
+                                curr_intersection.state_ns = False
+                                curr_intersection.state_we = True
+                                curr_intersection.cycle_time = 10000
+                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                            if temp_message.topic == f"intersection/{i}/rushhour":
+                                print("ENTERED THE RIGHT PATH because: " + str(
+                                    temp_message.topic) + " = " + f"intersection/{i}/rushhour")
+                                curr_intersection.state_ns = False
+                                curr_intersection.state_we = True
+                                curr_intersection.cycle_time = 20
+                                temp_client.publish(f"intersection/{next}/emergency", temp_message.payload, qos=2)
+                intersection_message = False
+
+                # RESET CYCLE TIME
+                if not emergency_activated and not rush_hour_activated:
+                    for i in world.all_intersections:
+                        i.cycle_time = 10
         print("*****************************")
 
     print("Simulation done")
